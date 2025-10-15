@@ -54,7 +54,6 @@ export default function PennStateIdRotaryInput({
     // Trigger companion behaviors
     companion.enlarge();
     companion.show();
-    companion.moveTo({ right: 24, bottom: 24 });
     companion.say(
       `Oh? Tapping ${key}? Let's make this truly inconvenient…`,
       { timeoutMs: 2500 }
