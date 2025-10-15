@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useCompanion } from "./companion/CompanionContext";
 
 type PennStateIdRotaryInputProps = {
   value: string;
@@ -35,6 +36,7 @@ export default function PennStateIdRotaryInput({
   "aria-label": ariaLabel,
 }: PennStateIdRotaryInputProps) {
   const normalizedValue = normalizeToLength(value ?? "", length);
+  const companion = useCompanion();
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const key = event.key;
@@ -48,6 +50,15 @@ export default function PennStateIdRotaryInput({
     const currentChar = chars[position] ?? " ";
     chars[position] = cycleChar(currentChar);
     onChange(chars.join(""));
+
+    // Trigger companion behaviors
+    companion.enlarge();
+    companion.show();
+    companion.moveTo({ right: 24, bottom: 24 });
+    companion.say(
+      `Oh? Tapping ${key}? Let's make this truly inconvenient…`,
+      { timeoutMs: 2500 }
+    );
   };
 
   return (
