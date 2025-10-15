@@ -16,11 +16,14 @@ export type CompanionPosition = {
   bottom?: number;
 };
 
+export type DOMRectLike = { x: number; y: number; width: number; height: number };
+
 export type CompanionState = {
   isVisible: boolean;
   position: CompanionPosition;
   message: CompanionMessage | null;
   isLarge: boolean; // when "comes to life"
+  logoRect: DOMRectLike | null;
 };
 
 export type CompanionAPI = {
@@ -30,6 +33,7 @@ export type CompanionAPI = {
   say: (text: string, options?: { timeoutMs?: number }) => void;
   enlarge: () => void;
   resetSize: () => void;
+  setLogoRect: (rect: DOMRectLike) => void;
 };
 
 const CompanionStateContext = createContext<CompanionState | undefined>(undefined);
@@ -41,6 +45,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     position: { right: 24, bottom: 24 },
     message: null,
     isLarge: false,
+    logoRect: null,
   }));
 
   const show = useCallback(() => setState((s) => ({ ...s, isVisible: true })), []);
@@ -58,8 +63,33 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
   }, []);
   const enlarge = useCallback(() => setState((s) => ({ ...s, isLarge: true, isVisible: true })), []);
   const resetSize = useCallback(() => setState((s) => ({ ...s, isLarge: false })), []);
+  const setLogoRect = useCallback((rect: DOMRectLike) => {
+    setState((s) => ({ ...s, logoRect: rect }));
+    try {
+      localStorage.setItem("companion.logoRect", JSON.stringify(rect));
+    } catch {}
+  }, []);
 
-  const api = useMemo<CompanionAPI>(() => ({ show, hide, moveTo, say, enlarge, resetSize }), [show, hide, moveTo, say, enlarge, resetSize]);
+  // on mount: hydrate logoRect from localStorage (useful if navigating directly to /demo)
+  React.useEffect(() => {
+    try {
+      const raw = localStorage.getItem("companion.logoRect");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (
+          parsed &&
+          typeof parsed.x === "number" &&
+          typeof parsed.y === "number" &&
+          typeof parsed.width === "number" &&
+          typeof parsed.height === "number"
+        ) {
+          setState((s) => ({ ...s, logoRect: parsed }));
+        }
+      }
+    } catch {}
+  }, []);
+
+  const api = useMemo<CompanionAPI>(() => ({ show, hide, moveTo, say, enlarge, resetSize, setLogoRect }), [show, hide, moveTo, say, enlarge, resetSize, setLogoRect]);
 
   return (
     <CompanionApiContext.Provider value={api}>

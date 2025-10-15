@@ -1,13 +1,36 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import React from "react";
+import { useCompanion } from "./companion/CompanionContext";
 
 export default function HeaderLogo() {
+  const { setLogoRect } = useCompanion();
+  const ref = React.useRef<HTMLImageElement | null>(null);
+
+  React.useEffect(() => {
+    if (!ref.current) return;
+    const el = ref.current;
+    const update = () => {
+      const r = el.getBoundingClientRect();
+      setLogoRect({ x: r.x, y: r.y, width: r.width, height: r.height });
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [setLogoRect]);
+
   return (
-    <motion.div layoutId="brand-logo" className="flex items-center gap-2">
-      <Image src="/logo.png" alt="ishaform logo" width={28} height={28} className="rounded" />
+    <span className="flex items-center gap-2">
+      <Image ref={ref} src="/logo.png" alt="ishaform logo" width={28} height={28} className="rounded" />
       <span className="text-base font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">ishaform</span>
-    </motion.div>
+    </span>
   );
 }

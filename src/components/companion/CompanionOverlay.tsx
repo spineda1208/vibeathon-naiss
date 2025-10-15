@@ -3,27 +3,37 @@
 import Image from "next/image";
 import React from "react";
 import { motion } from "framer-motion";
+import { DOMRectLike } from "./CompanionContext";
 import { useCompanionState } from "./CompanionContext";
 
 export default function CompanionOverlay() {
-  const { isVisible, position, message, isLarge } = useCompanionState();
+  const { isVisible, position, message, isLarge, logoRect } = useCompanionState();
 
   if (!isVisible) return null;
 
   const size = isLarge ? 100 : 36;
 
+  // If we have a logoRect, use it as the animation origin (shared element illusion)
+  const originStyle: React.CSSProperties | undefined = logoRect
+    ? { top: logoRect.y, left: logoRect.x }
+    : undefined;
+
   return (
     <div
       className="fixed z-50 pointer-events-none"
       style={{
-        top: position.top,
-        left: position.left,
+        top: position.top ?? originStyle?.top,
+        left: position.left ?? originStyle?.left,
         right: position.right,
         bottom: position.bottom,
       }}
     >
       <div className="relative">
-        <motion.div layoutId="brand-logo" initial={false} animate={{ scale: isLarge ? 1.25 : 1 }} transition={{ type: "spring", stiffness: 300, damping: 24 }}>
+        <motion.div
+          initial={logoRect ? { width: logoRect.width, height: logoRect.height, scale: 1 } : false}
+          animate={{ scale: isLarge ? 1.25 : 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 24 }}
+        >
           <Image src="/logo.png" alt="ishaform companion" width={size} height={size} className="rounded" />
         </motion.div>
         {message?.text ? (
