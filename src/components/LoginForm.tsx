@@ -49,7 +49,13 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 font-mono" onFocus={() => { /* ensure companion shows near card when any input focused */ }}>
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 font-mono"
+      onFocus={() => {
+        /* ensure companion shows near card when any input focused */
+      }}
+    >
       <div>
         <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
           Penn State ID

@@ -37,6 +37,8 @@ export default function PennStateIdRotaryInput({
 }: PennStateIdRotaryInputProps) {
   const normalizedValue = normalizeToLength(value ?? "", length);
   const companion = useCompanion();
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const lastCaretPosRef = React.useRef<number | null>(null);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const key = event.key;
@@ -54,19 +56,39 @@ export default function PennStateIdRotaryInput({
     // Trigger companion behaviors
     companion.enlarge();
     companion.show();
-    companion.say(
-      `Oh? Tapping ${key}? Let's make this truly inconvenient…`,
-      { timeoutMs: 2500 }
-    );
+    companion.say(`Oh? Tapping ${key}? Let's make this truly inconvenient…`, {
+      timeoutMs: 2500,
+    });
+
+    // Remember caret target so it sits in front of the last-updated character
+    lastCaretPosRef.current = position; // caret before character at index
+    // Ensure focus stays so the caret is visible
+    inputRef.current?.focus();
   };
+
+  // After value updates, move the caret to the remembered position
+  React.useLayoutEffect(() => {
+    if (lastCaretPosRef.current == null) return;
+    const el = inputRef.current;
+    if (!el) return;
+    const pos =
+      Math.max(0, Math.min(normalizedValue.length, lastCaretPosRef.current)) +
+      1;
+    try {
+      el.setSelectionRange(pos, pos);
+    } catch {}
+  }, [normalizedValue]);
 
   return (
     <input
       type="text"
       inputMode="none"
+      ref={inputRef}
       value={normalizedValue}
       onKeyDown={handleKeyDown}
-      onChange={() => { /* ignore direct typing */ }}
+      onChange={() => {
+        /* ignore direct typing */
+      }}
       readOnly
       className={
         className ??
