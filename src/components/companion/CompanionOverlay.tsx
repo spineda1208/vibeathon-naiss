@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import React from "react";
+import { motion } from "framer-motion";
 import { useCompanionState } from "./CompanionContext";
 
 export default function CompanionOverlay() {
@@ -22,11 +23,9 @@ export default function CompanionOverlay() {
       }}
     >
       <div className="relative">
-        <div
-          className={`transition-transform duration-300 ease-out ${isLarge ? "scale-125" : "scale-100"}`}
-        >
+        <motion.div layoutId="brand-logo" initial={false} animate={{ scale: isLarge ? 1.25 : 1 }} transition={{ type: "spring", stiffness: 300, damping: 24 }}>
           <Image src="/logo.png" alt="ishaform companion" width={size} height={size} className="rounded" />
-        </div>
+        </motion.div>
         {message?.text ? (
           <div className="absolute -top-2 left-full ml-2 max-w-[240px] bg-white/90 dark:bg-neutral-900/90 border border-black/10 dark:border-white/10 rounded-xl px-3 py-2 text-sm shadow-md pointer-events-auto">
             <p className="text-neutral-800 dark:text-neutral-200">{message.text}</p>
