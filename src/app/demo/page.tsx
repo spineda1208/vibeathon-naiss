@@ -1,8 +1,8 @@
 import LoginForm from "../../components/LoginForm";
 
 export const metadata = {
-  title: "ishaform — Demo Login",
-  description: "Demo of the ironically bad login form.",
+  title: "ishaform — Demo Signup",
+  description: "Demo of the ironically bad signup form.",
 };
 
 export default function DemoPage() {
@@ -23,8 +23,11 @@ export default function DemoPage() {
         </div>
 
         <p className="mt-6 text-center text-sm text-neutral-600 dark:text-neutral-400">
-          Regret this experience? {" "}
-          <a href="/" className="font-medium text-violet-600 hover:underline dark:text-violet-400">
+          Regret this experience?{" "}
+          <a
+            href="/"
+            className="font-medium text-violet-600 hover:underline dark:text-violet-400"
+          >
             Return home
           </a>
         </p>

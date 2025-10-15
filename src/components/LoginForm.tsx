@@ -1,18 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import PennStateIdRotaryInput from "./PennStateIdRotaryInput";
 
 type FormErrors = {
-  email?: string;
+  pennStateId?: string;
   password?: string;
 };
 
-function validateEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+function validatePennStateId(pennStateId: string): boolean {
+  return (pennStateId ?? "").length === 7;
 }
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
+  const [pennStateId, setPennStateId] = useState("       ");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,10 +23,10 @@ export default function LoginForm() {
     event.preventDefault();
 
     const nextErrors: FormErrors = {};
-    if (!email) {
-      nextErrors.email = "Email is required";
-    } else if (!validateEmail(email)) {
-      nextErrors.email = "Enter a valid email";
+    if (!pennStateId.trim()) {
+      nextErrors.pennStateId = "Penn State ID is required";
+    } else if (!validatePennStateId(pennStateId)) {
+      nextErrors.pennStateId = "Enter a 7-character Penn State ID";
     }
 
     if (!password) {
@@ -41,7 +42,7 @@ export default function LoginForm() {
       setIsSubmitting(true);
       // Simulate network request
       await new Promise((r) => setTimeout(r, 800));
-      console.log("Login with:", { email, password });
+      console.log("Signup with:", { pennStateId, password });
     } finally {
       setIsSubmitting(false);
     }
@@ -50,27 +51,29 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
-          Email
+        <label className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
+          Penn State ID
         </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+        <PennStateIdRotaryInput
+          value={pennStateId}
+          onChange={setPennStateId}
+          length={7}
           className="mt-1 w-full rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 px-3 py-2 text-neutral-900 dark:text-neutral-100 shadow-sm outline-none placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-violet-500/60 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-950"
-          placeholder="you@example.com"
+          placeholder="Use keys 1-7 to cycle each position"
+          aria-label="Penn State ID"
         />
-        {errors.email ? (
-          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.email}</p>
+        {errors.pennStateId ? (
+          <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+            {errors.pennStateId}
+          </p>
         ) : null}
       </div>
 
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
+        <label
+          htmlFor="password"
+          className="block text-sm font-medium text-neutral-800 dark:text-neutral-200"
+        >
           Password
         </label>
         <div className="mt-1 relative">
@@ -95,16 +98,24 @@ export default function LoginForm() {
           </button>
         </div>
         {errors.password ? (
-          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.password}</p>
+          <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+            {errors.password}
+          </p>
         ) : null}
       </div>
 
       <div className="flex items-center justify-between">
         <label className="flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300">
-          <input type="checkbox" className="size-4 rounded border-neutral-300 dark:border-neutral-700 text-violet-600 focus:ring-violet-500" />
+          <input
+            type="checkbox"
+            className="size-4 rounded border-neutral-300 dark:border-neutral-700 text-violet-600 focus:ring-violet-500"
+          />
           Remember me
         </label>
-        <a href="#" className="text-sm font-medium text-violet-600 hover:underline dark:text-violet-400">
+        <a
+          href="#"
+          className="text-sm font-medium text-violet-600 hover:underline dark:text-violet-400"
+        >
           Forgot password?
         </a>
       </div>
@@ -114,7 +125,7 @@ export default function LoginForm() {
         disabled={isSubmitting}
         className="group relative inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-fuchsia-500 px-4 py-2.5 font-medium text-white shadow-lg shadow-violet-500/20 transition focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-950 disabled:opacity-60"
       >
-        {isSubmitting ? "Signing in…" : "Sign in"}
+        {isSubmitting ? "Signing up…" : "Sign up"}
       </button>
     </form>
   );
