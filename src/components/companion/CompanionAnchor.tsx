@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-import { useCompanion } from "./CompanionContext";
+import { useCompanion, useCompanionState } from "./CompanionContext";
 
 // Anchors the companion to a DOM element's top-right corner
 export default function CompanionAnchor({ children }: { children: React.ReactNode }) {
   const ref = React.useRef<HTMLDivElement | null>(null);
   const companion = useCompanion();
+  const { isVisible } = useCompanionState();
 
   const updatePosition = React.useCallback(() => {
     if (!ref.current) return;
@@ -18,6 +19,7 @@ export default function CompanionAnchor({ children }: { children: React.ReactNod
   }, [companion]);
 
   React.useEffect(() => {
+    if (!isVisible) return; // only anchor when companion is visible
     updatePosition();
     const onResize = () => updatePosition();
     window.addEventListener("resize", onResize);
@@ -29,7 +31,7 @@ export default function CompanionAnchor({ children }: { children: React.ReactNod
       window.removeEventListener("scroll", onResize as any);
       ro.disconnect();
     };
-  }, [updatePosition]);
+  }, [isVisible, updatePosition]);
 
   return (
     <div ref={ref} className="relative" data-companion-anchor>
