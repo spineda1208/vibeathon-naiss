@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import CaptchaGate from "./captcha/CaptchaGate";
-import { CompanionSize, useCompanion } from "./companion/CompanionContext";
+import { CompanionAvatar, CompanionSize, useCompanion } from "./companion/CompanionContext";
 import PennStateIdRotaryInput from "./PennStateIdRotaryInput";
 import ReverseRevealPasswordInput from "./ReverseRevealPasswordInput";
 
@@ -69,7 +69,7 @@ export default function SignupForm() {
     if (isRememberMeBlocking) return;
     playAlarmSoundFromFile();
     // Companion: switch to anime girl, center and enlarge
-    companion.setAvatarSrc("/companion/anime_girl.png");
+    companion.avatar(CompanionAvatar.AnimeGirl);
     companion.setCentered(true);
     companion.setSize(CompanionSize.Large);
     companion.show();
@@ -78,7 +78,7 @@ export default function SignupForm() {
       setIsRememberMeBlocking(false);
       // Revert centered/avatar explicitly; backtrack position/size
       companion.setCentered(false);
-      companion.setAvatarSrc("/logo.png");
+      companion.avatar(CompanionAvatar.Logo);
       companion.backtrack();
     }, 3000);
   }

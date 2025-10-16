@@ -3,10 +3,10 @@
 import Image from "next/image";
 import React from "react";
 import { motion } from "framer-motion";
-import { CompanionSize, useCompanionState } from "./CompanionContext";
+import { CompanionAvatar, CompanionSize, useCompanionState } from "./CompanionContext";
 
 export default function CompanionOverlay() {
-  const { isVisible, position, message, logoRect, avatarSrc, isCentered, size, sizePx } = useCompanionState();
+  const { isVisible, position, message, logoRect, avatar, isCentered, size, sizePx } = useCompanionState();
 
   if (!isVisible) return null;
 
@@ -40,7 +40,7 @@ export default function CompanionOverlay() {
       <div className="relative">
         <motion.div animate={{ scale: isCentered ? 1 : 1 }} transition={{ type: "spring", stiffness: 300, damping: 24 }}>
           <Image
-            src={avatarSrc}
+            src={avatar === CompanionAvatar.Logo ? "/logo.png" : avatar === CompanionAvatar.AnimeGirl ? "/companion/anime_girl.png" : "/companion/mad.png"}
             alt="ishaform companion"
             width={baseSize}
             height={baseSize}

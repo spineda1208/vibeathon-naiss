@@ -35,13 +35,19 @@ export enum CompanionSize {
   Large = "large",
 }
 
+export enum CompanionAvatar {
+  Logo = "logo",
+  AnimeGirl = "anime_girl",
+  Mad = "mad",
+}
+
 export type CompanionState = {
   isVisible: boolean;
   position: CompanionPosition;
   message: CompanionMessage | null;
   logoRect: DOMRectLike | null;
   hasActivated: boolean; // once true, navbar icon should hide
-  avatarSrc: string; // image used by overlay
+  avatar: CompanionAvatar; // selected avatar
   isCentered: boolean; // whether overlay should be centered on screen
   size: CompanionSize; // strict sizing mode
   sizePx: number | null; // resolved pixel width for rendering
@@ -57,7 +63,7 @@ export type CompanionAPI = {
   say: (text: string, options?: { timeoutMs?: number }) => void;
   setSize: (size: CompanionSize) => void;
   setLogoRect: (rect: DOMRectLike) => void;
-  setAvatarSrc: (src: string) => void;
+  avatar: (a: CompanionAvatar) => void;
   setCentered: (centered: boolean) => void;
   backtrack: () => void;
 };
@@ -74,7 +80,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     message: null,
     logoRect: null,
     hasActivated: false,
-    avatarSrc: "/logo.png",
+    avatar: CompanionAvatar.Logo,
     isCentered: false,
     size: CompanionSize.Base,
     sizePx: null,
@@ -113,41 +119,51 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const resolveSizePx = useCallback((size: CompanionSize, logoRect: DOMRectLike | null) => {
-    const base = Math.max(1, Math.floor(logoRect?.width ?? 28));
-    if (size === CompanionSize.Base) return base;
-    if (size === CompanionSize.Medium) return Math.max(1, Math.floor(base * 2));
-    // Large: fixed multiple of base (no viewport usage)
-    return Math.max(1, Math.floor(base * 8));
-  }, []);
+  const resolveSizePx = useCallback(
+    (size: CompanionSize, logoRect: DOMRectLike | null) => {
+      const base = Math.max(1, Math.floor(logoRect?.width ?? 28));
+      if (size === CompanionSize.Base) return base;
+      if (size === CompanionSize.Medium)
+        return Math.max(1, Math.floor(base * 2));
+      // Large: fixed multiple of base (no viewport usage)
+      return Math.max(1, Math.floor(base * 8));
+    },
+    [],
+  );
 
-  const setSize = useCallback((size: CompanionSize) => {
-    setState((s) => ({
-      ...s,
-      size,
-      lastSizePx: s.sizePx,
-      sizePx: resolveSizePx(size, s.logoRect),
-      isVisible: true,
-      hasActivated: true,
-    }));
-  }, [resolveSizePx]);
-  const setLogoRect = useCallback((rect: DOMRectLike) => {
-    setState((s) => {
-      // If size is Base or Medium, recompute sizePx from new logoRect
-      const shouldRecompute = s.size !== CompanionSize.Large;
-      return {
+  const setSize = useCallback(
+    (size: CompanionSize) => {
+      setState((s) => ({
         ...s,
-        logoRect: rect,
-        sizePx: shouldRecompute ? resolveSizePx(s.size, rect) : s.sizePx,
-      };
-    });
-    try {
-      localStorage.setItem("companion.logoRect", JSON.stringify(rect));
-    } catch {}
-  }, [resolveSizePx]);
+        size,
+        lastSizePx: s.sizePx,
+        sizePx: resolveSizePx(size, s.logoRect),
+        isVisible: true,
+        hasActivated: true,
+      }));
+    },
+    [resolveSizePx],
+  );
+  const setLogoRect = useCallback(
+    (rect: DOMRectLike) => {
+      setState((s) => {
+        // If size is Base or Medium, recompute sizePx from new logoRect
+        const shouldRecompute = s.size !== CompanionSize.Large;
+        return {
+          ...s,
+          logoRect: rect,
+          sizePx: shouldRecompute ? resolveSizePx(s.size, rect) : s.sizePx,
+        };
+      });
+      try {
+        localStorage.setItem("companion.logoRect", JSON.stringify(rect));
+      } catch {}
+    },
+    [resolveSizePx],
+  );
 
-  const setAvatarSrc = useCallback((src: string) => {
-    setState((s) => ({ ...s, avatarSrc: src }));
+  const avatar = useCallback((a: CompanionAvatar) => {
+    setState((s) => ({ ...s, avatar: a }));
   }, []);
 
   const setCentered = useCallback((centered: boolean) => {
@@ -202,7 +218,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       say,
       setSize,
       setLogoRect,
-      setAvatarSrc,
+      avatar,
       setCentered,
       backtrack,
     }),
@@ -213,7 +229,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       say,
       setSize,
       setLogoRect,
-      setAvatarSrc,
+      avatar,
       setCentered,
       backtrack,
     ],
