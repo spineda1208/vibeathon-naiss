@@ -1,3 +1,7 @@
+import Link from "next/link";
+
+import React from "react";
+
 export const metadata = {
   title: "ishaform — Worst Auth Landing",
   description: "An ironically over-the-top landing for the worst auth form.",
@@ -5,7 +9,14 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <main className="min-h-screen grid place-items-center px-6 py-12">
+    <main className="relative min-h-screen grid place-items-center px-6 py-12">
+      {/* Decorative particle background */}
+      {/* @ts-expect-error Async import of client component */}
+      {(() => {
+        if (typeof window === "undefined") return null;
+        const Bg = require("../components/BackgroundParticles").default;
+        return Bg ? React.createElement(Bg) : null;
+      })()}
       <div className="mx-auto max-w-4xl text-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-black/10 dark:border-white/15 bg-white/70 dark:bg-neutral-900/60 px-3 py-1 text-xs font-medium text-neutral-700 dark:text-neutral-300 shadow-sm backdrop-blur">
           for serious inquiries only
@@ -17,18 +28,12 @@ export default function Home() {
           are you tired of paying for clerk?
         </p>
         <div className="mt-8 flex items-center justify-center gap-3">
-          <a
+          <Link
             href="/demo"
             className="inline-flex items-center justify-center rounded-xl bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 px-5 py-3 font-medium shadow-lg shadow-neutral-900/10 hover:opacity-90"
           >
-            Try the Worst Auth Form
-          </a>
-          <a
-            href="#features"
-            className="inline-flex items-center justify-center rounded-xl border border-black/10 dark:border-white/15 bg-white/70 dark:bg-neutral-900/60 px-5 py-3 font-medium text-neutral-800 dark:text-neutral-200 hover:bg-white/90 dark:hover:bg-neutral-900/80"
-          >
-            Why is it so bad?
-          </a>
+            try isha form
+          </Link>
         </div>
       </div>
 
