@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import React from "react";
-import { useCompanion } from "./companion/CompanionContext";
+import { useCompanion, useCompanionState } from "./companion/CompanionContext";
 
 export default function HeaderLogo() {
   const { setLogoRect } = useCompanion();
+  const { hasActivated } = useCompanionState();
   const ref = React.useRef<HTMLImageElement | null>(null);
 
   React.useEffect(() => {
@@ -26,6 +27,8 @@ export default function HeaderLogo() {
       window.removeEventListener("resize", update);
     };
   }, [setLogoRect]);
+
+  if (hasActivated) return null;
 
   return (
     <span className="flex items-center gap-2">

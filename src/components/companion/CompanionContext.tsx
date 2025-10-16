@@ -35,6 +35,7 @@ export type CompanionState = {
   message: CompanionMessage | null;
   isLarge: boolean; // when "comes to life"
   logoRect: DOMRectLike | null;
+  hasActivated: boolean; // once true, navbar icon should hide
 };
 
 export type CompanionAPI = {
@@ -59,10 +60,11 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     message: null,
     isLarge: false,
     logoRect: null,
+    hasActivated: false,
   }));
 
   const show = useCallback(
-    () => setState((s) => ({ ...s, isVisible: true })),
+    () => setState((s) => ({ ...s, isVisible: true, hasActivated: true })),
     [],
   );
   const hide = useCallback(
@@ -80,7 +82,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       text,
       timeoutMs: options?.timeoutMs,
     };
-    setState((s) => ({ ...s, isVisible: true, message }));
+    setState((s) => ({ ...s, isVisible: true, hasActivated: true, message }));
     if (options?.timeoutMs && options.timeoutMs > 0) {
       setTimeout(() => {
         setState((s) => (s.message?.id === id ? { ...s, message: null } : s));
@@ -88,7 +90,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
   const enlarge = useCallback(
-    () => setState((s) => ({ ...s, isLarge: true, isVisible: true })),
+    () => setState((s) => ({ ...s, isLarge: true, isVisible: true, hasActivated: true })),
     [],
   );
   const resetSize = useCallback(
