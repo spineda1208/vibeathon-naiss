@@ -83,6 +83,10 @@ export default function PennStateIdRotaryInput({
     <input
       type="text"
       inputMode="none"
+      onFocus={() => {
+        companion.enlarge();
+        companion.show();
+      }}
       ref={inputRef}
       value={normalizedValue}
       onKeyDown={handleKeyDown}
