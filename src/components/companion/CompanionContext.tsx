@@ -54,6 +54,7 @@ export type CompanionState = {
   // Previous position/size snapshot for quick backtracking
   lastPosition: CompanionPosition | null;
   lastSizePx: number | null;
+  lastSize: CompanionSize | null;
 };
 
 export type CompanionAPI = {
@@ -86,6 +87,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     sizePx: null,
     lastPosition: null,
     lastSizePx: null,
+    lastSize: null,
   }));
 
   const show = useCallback(
@@ -97,12 +99,17 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     [],
   );
   const moveTo = useCallback((pos: CompanionPosition) => {
-    setState((s) => ({
-      ...s,
-      lastPosition: { ...s.position },
-      lastSizePx: s.sizePx,
-      position: pos,
-    }));
+    setState((s) => {
+      // While centered, ignore last-position/size tracking to preserve pre-centered snapshot
+      if (s.isCentered) {
+        return { ...s, position: pos };
+      }
+      return {
+        ...s,
+        lastPosition: { ...s.position },
+        position: pos,
+      };
+    });
   }, []);
   const say = useCallback((text: string, options?: { timeoutMs?: number }) => {
     const id = `${Date.now()}`;
@@ -135,8 +142,10 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     (size: CompanionSize) => {
       setState((s) => ({
         ...s,
+        // While centered, do not update lastSize/lastSizePx so backtrack returns to pre-centered size
+        lastSize: s.isCentered ? s.lastSize : s.size,
         size,
-        lastSizePx: s.sizePx,
+        lastSizePx: s.isCentered ? s.lastSizePx : s.sizePx,
         sizePx: resolveSizePx(size, s.logoRect),
         isVisible: true,
         hasActivated: true,
@@ -174,18 +183,24 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
 
   const backtrack = useCallback(() => {
     setState((s) => {
-      if (!s.lastPosition && s.lastSizePx == null) return s;
+      if (!s.lastPosition && s.lastSizePx == null && !s.lastSize) return s;
       const prevPosition = s.position;
       const prevSizePx = s.sizePx;
+      const prevSize = s.size;
+      const nextSize = s.lastSize ?? s.size;
+      const nextSizePx = s.lastSizePx ?? resolveSizePx(nextSize, s.logoRect);
       return {
         ...s,
+        isCentered: false, // backtrack exits centered mode
         position: s.lastPosition ?? s.position,
-        sizePx: s.lastSizePx ?? s.sizePx,
+        size: nextSize,
+        sizePx: nextSizePx,
         lastPosition: prevPosition,
         lastSizePx: prevSizePx,
+        lastSize: prevSize,
       };
     });
-  }, []);
+  }, [resolveSizePx]);
 
   // on mount: hydrate logoRect from localStorage (useful if navigating directly to /demo)
   React.useEffect(() => {
