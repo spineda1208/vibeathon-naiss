@@ -1,4 +1,4 @@
-import LoginForm from "../../components/LoginForm";
+import SignupForm from "../../components/SignupForm";
 import CompanionAnchor from "../../components/companion/CompanionAnchor";
 
 export const metadata = {
@@ -20,8 +20,8 @@ export default function DemoPage() {
         </div>
 
         <CompanionAnchor>
-          <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-neutral-900/70 backdrop-blur p-6 shadow-xl">
-            <LoginForm />
+          <div className="relative rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-neutral-900/70 backdrop-blur p-6 shadow-xl">
+            <SignupForm />
           </div>
         </CompanionAnchor>
 

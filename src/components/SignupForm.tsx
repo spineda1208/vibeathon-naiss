@@ -174,7 +174,7 @@ export default function SignupForm() {
       </button>
 
       {isRememberMeBlocking ? (
-        <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm pointer-events-auto grid place-items-center">
+        <div className="absolute inset-0 z-[60] rounded-2xl bg-black/40 backdrop-blur-sm pointer-events-auto grid place-items-center">
           <div className="size-12 rounded-full border-4 border-white/60 border-t-transparent animate-spin" />
         </div>
       ) : null}
