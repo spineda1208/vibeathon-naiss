@@ -39,7 +39,7 @@ export default function CompanionOverlay() {
       style={{}}
     >
       <div className="relative">
-        <motion.div animate={{ scale: isLarge ? 1.8 : 1 }} transition={{ type: "spring", stiffness: 300, damping: 24 }}>
+        <motion.div animate={{ scale: isLarge ? 2.4 : 1 }} transition={{ type: "spring", stiffness: 300, damping: 24 }}>
           <Image
             src="/logo.png"
             alt="ishaform companion"
