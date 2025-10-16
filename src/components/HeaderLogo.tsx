@@ -5,7 +5,7 @@ import React from "react";
 import { useCompanion, useCompanionState } from "./companion/CompanionContext";
 
 export default function HeaderLogo() {
-  const { setLogoRect } = useCompanion();
+  const { setLogoRect, moveTo, show, resetSize } = useCompanion();
   const { hasActivated } = useCompanionState();
   const ref = React.useRef<HTMLElement | null>(null);
 
@@ -28,8 +28,19 @@ export default function HeaderLogo() {
     };
   }, [setLogoRect]);
 
+  const handleClick = () => {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const top = r.top + window.scrollY;
+    const left = r.left + window.scrollX;
+    moveTo({ top, left });
+    resetSize();
+    show();
+  };
+
   return (
-    <span className="flex items-center gap-2">
+    <span className="flex items-center gap-2 cursor-pointer select-none" onClick={handleClick}>
       <span ref={ref} className="inline-flex">
         {!hasActivated ? (
           <Image
