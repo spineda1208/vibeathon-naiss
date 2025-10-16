@@ -17,14 +17,32 @@ export default function ReverseRevealPasswordInput({
 }: ReverseRevealPasswordInputProps) {
   const [show, setShow] = React.useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const typed = e.target.value;
-    const reversed = typed.split("").reverse().join("");
-    onChange(reversed);
-    setShow(true); // show on every character typed
+  // Treat input as read-only and handle key events to build reversed state
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return; // allow shortcuts
+    const key = e.key;
+    if (key === "Backspace") {
+      e.preventDefault();
+      onChange(value.slice(1)); // remove most-recent typed (front of reversed string)
+      setShow(true);
+      return;
+    }
+    if (key.length === 1) {
+      e.preventDefault();
+      onChange(key + value); // prepend to reversed string
+      setShow(true);
+      return;
+    }
   };
 
-  const displayedValue = show ? value.split("").reverse().join("") : value; // when hidden, the browser masks; keep same string
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const text = e.clipboardData.getData("text");
+    if (!text) return;
+    e.preventDefault();
+    const reversed = text.split("").reverse().join("");
+    onChange(reversed + value);
+    setShow(true);
+  };
 
   return (
     <div className="mt-1 relative">
@@ -34,8 +52,11 @@ export default function ReverseRevealPasswordInput({
         type={show ? "text" : "password"}
         autoComplete="current-password"
         required
-        value={displayedValue}
-        onChange={handleChange}
+        value={value}
+        onChange={() => { /* controlled via key handlers */ }}
+        onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
+        readOnly
         className={
           className ??
           "w-full rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 px-3 py-2 pr-10 text-neutral-900 dark:text-neutral-100 shadow-sm outline-none placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-violet-500/60 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-950"
