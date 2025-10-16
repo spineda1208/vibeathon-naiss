@@ -7,7 +7,7 @@ import { useCompanion, useCompanionState } from "./companion/CompanionContext";
 export default function HeaderLogo() {
   const { setLogoRect } = useCompanion();
   const { hasActivated } = useCompanionState();
-  const ref = React.useRef<HTMLImageElement | null>(null);
+  const ref = React.useRef<HTMLElement | null>(null);
 
   React.useEffect(() => {
     if (!ref.current) return;
@@ -28,12 +28,27 @@ export default function HeaderLogo() {
     };
   }, [setLogoRect]);
 
-  if (hasActivated) return null;
-
   return (
     <span className="flex items-center gap-2">
-      <Image ref={ref} src="/logo.png" alt="ishaform logo" width={28} height={28} className="rounded" />
-      <span className="text-base font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">ishaform</span>
+      <span ref={ref} className="inline-flex">
+        {!hasActivated ? (
+          <Image
+            src="/logo.png"
+            alt="ishaform logo"
+            width={28}
+            height={28}
+            className="rounded"
+          />
+        ) : (
+          <span
+            aria-hidden="true"
+            className="block size-[28px] rounded bg-neutral-200 dark:bg-neutral-800 ring-1 ring-black/10 dark:ring-white/10 animate-pulse"
+          />
+        )}
+      </span>
+      <span className="text-base font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
+        ishaform
+      </span>
     </span>
   );
 }
