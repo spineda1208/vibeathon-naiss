@@ -39,13 +39,9 @@ export type CompanionState = {
   avatarSrc: string; // image used by overlay
   isCentered: boolean; // whether overlay should be centered on screen
   sizePx: number | null; // explicit pixel size override
-  saved: {
-    position: CompanionPosition;
-    isCentered: boolean;
-    sizePx: number | null;
-    avatarSrc: string;
-    isLarge: boolean;
-  } | null;
+  // Previous position/size snapshot for quick backtracking
+  lastPosition: CompanionPosition | null;
+  lastSizePx: number | null;
 };
 
 export type CompanionAPI = {
@@ -60,8 +56,7 @@ export type CompanionAPI = {
   setCentered: (centered: boolean) => void;
   setSizePx: (px: number) => void;
   clearSizePx: () => void;
-  saveState: () => void;
-  restoreState: () => void;
+  backtrack: () => void;
 };
 
 const CompanionStateContext = createContext<CompanionState | undefined>(
@@ -80,7 +75,8 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     avatarSrc: "/logo.png",
     isCentered: false,
     sizePx: null,
-    saved: null,
+    lastPosition: null,
+    lastSizePx: null,
   }));
 
   const show = useCallback(
@@ -91,10 +87,14 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     () => setState((s) => ({ ...s, isVisible: false })),
     [],
   );
-  const moveTo = useCallback(
-    (pos: CompanionPosition) => setState((s) => ({ ...s, position: pos })),
-    [],
-  );
+  const moveTo = useCallback((pos: CompanionPosition) => {
+    setState((s) => ({
+      ...s,
+      lastPosition: { ...s.position },
+      lastSizePx: s.sizePx,
+      position: pos,
+    }));
+  }, []);
   const say = useCallback((text: string, options?: { timeoutMs?: number }) => {
     const id = `${Date.now()}`;
     const message: CompanionMessage = {
@@ -110,7 +110,13 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
   const enlarge = useCallback(
-    () => setState((s) => ({ ...s, isLarge: true, isVisible: true, hasActivated: true })),
+    () =>
+      setState((s) => ({
+        ...s,
+        isLarge: true,
+        isVisible: true,
+        hasActivated: true,
+      })),
     [],
   );
   const resetSize = useCallback(
@@ -133,39 +139,29 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setSizePx = useCallback((px: number) => {
-    setState((s) => ({ ...s, sizePx: Math.max(1, Math.floor(px)) }));
-  }, []);
-
-  const clearSizePx = useCallback(() => {
-    setState((s) => ({ ...s, sizePx: null }));
-  }, []);
-
-  const saveState = useCallback(() => {
     setState((s) => ({
       ...s,
-      saved: {
-        position: { ...s.position },
-        isCentered: s.isCentered,
-        sizePx: s.sizePx,
-        avatarSrc: s.avatarSrc,
-        isLarge: s.isLarge,
-      },
+      lastSizePx: s.sizePx,
+      sizePx: Math.max(1, Math.floor(px)),
     }));
   }, []);
 
-  const restoreState = useCallback(() => {
+  const clearSizePx = useCallback(() => {
+    setState((s) => ({ ...s, lastSizePx: s.sizePx, sizePx: null }));
+  }, []);
+
+  const backtrack = useCallback(() => {
     setState((s) => {
-      if (!s.saved) return s;
-      const next = {
+      if (!s.lastPosition && s.lastSizePx == null) return s;
+      const prevPosition = s.position;
+      const prevSizePx = s.sizePx;
+      return {
         ...s,
-        position: { ...s.saved.position },
-        isCentered: s.saved.isCentered,
-        sizePx: s.saved.sizePx,
-        avatarSrc: s.saved.avatarSrc,
-        isLarge: s.saved.isLarge,
-        saved: null,
+        position: s.lastPosition ?? s.position,
+        sizePx: s.lastSizePx ?? s.sizePx,
+        lastPosition: prevPosition,
+        lastSizePx: prevSizePx,
       };
-      return next;
     });
   }, []);
 
@@ -201,10 +197,22 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       setCentered,
       setSizePx,
       clearSizePx,
-      saveState,
-      restoreState,
+      backtrack,
     }),
-    [show, hide, moveTo, say, enlarge, resetSize, setLogoRect, setAvatarSrc, setCentered, setSizePx, clearSizePx, saveState, restoreState],
+    [
+      show,
+      hide,
+      moveTo,
+      say,
+      enlarge,
+      resetSize,
+      setLogoRect,
+      setAvatarSrc,
+      setCentered,
+      setSizePx,
+      clearSizePx,
+      backtrack,
+    ],
   );
 
   return (

@@ -69,8 +69,6 @@ export default function SignupForm() {
     if (isRememberMeBlocking) return;
     playAlarmSoundFromFile();
     // Companion: switch to anime girl, center and enlarge
-    // capture last state internally
-    (companion as any).__captureLastState?.();
     companion.setAvatarSrc("/companion/anime_girl.png");
     companion.setCentered(true);
     companion.setSizePx(Math.min(window.innerWidth, window.innerHeight) * 0.6);
@@ -78,8 +76,10 @@ export default function SignupForm() {
     setIsRememberMeBlocking(true);
     setTimeout(() => {
       setIsRememberMeBlocking(false);
-      // Restore companion to exact previous state
-      companion.restoreState();
+      // Revert centered/avatar explicitly; backtrack position/size
+      companion.setCentered(false);
+      companion.setAvatarSrc("/logo.png");
+      companion.backtrack();
     }, 3000);
   }
 
