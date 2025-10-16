@@ -1,6 +1,5 @@
 import SignupForm from "../../components/SignupForm";
 import Link from "next/link";
-import CompanionAnchor from "../../components/companion/CompanionAnchor";
 
 export const metadata = {
   title: "ishaform — Demo Signup",
@@ -20,11 +19,9 @@ export default function DemoPage() {
           </p>
         </div>
 
-        <CompanionAnchor>
-          <div className="relative rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-neutral-900/70 backdrop-blur p-6 shadow-xl">
-            <SignupForm />
-          </div>
-        </CompanionAnchor>
+        <div className="relative rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-neutral-900/70 backdrop-blur p-6 shadow-xl">
+          <SignupForm />
+        </div>
 
         <p className="mt-6 text-center text-sm text-neutral-600 dark:text-neutral-400"></p>
       </div>

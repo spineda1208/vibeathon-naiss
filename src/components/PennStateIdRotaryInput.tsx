@@ -2,6 +2,7 @@
 
 import React from "react";
 import { CompanionSize, useCompanion } from "./companion/CompanionContext";
+import { positionRightOf } from "./companion/positioning";
 
 type PennStateIdRotaryInputProps = {
   value: string;
@@ -44,11 +45,7 @@ export default function PennStateIdRotaryInput({
   const positionCompanionRightOfInput = React.useCallback(() => {
     const el = inputRef.current;
     if (!el) return;
-    const r = el.getBoundingClientRect();
-    const compWidth = 28; // base logo size
-    const margin = 8;
-    const top = r.top + window.scrollY + Math.max(0, (r.height - compWidth) / 2);
-    const left = r.right + window.scrollX + margin;
+    const { top, left } = positionRightOf(el, { margin: 8, referenceSizePx: 28 });
     companion.moveTo({ top, left });
     companion.setSize(CompanionSize.Medium);
   }, [companion]);

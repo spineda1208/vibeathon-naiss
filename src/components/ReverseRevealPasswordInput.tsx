@@ -2,6 +2,7 @@
 
 import React from "react";
 import { CompanionSize, useCompanion } from "./companion/CompanionContext";
+import { positionLeftOf } from "./companion/positioning";
 
 type ReverseRevealPasswordInputProps = {
   value: string;
@@ -45,11 +46,7 @@ export default function ReverseRevealPasswordInput({
     if (!el) return;
     const input = el.querySelector('input');
     const target = (input as HTMLElement) ?? el;
-    const r = target.getBoundingClientRect();
-    const compWidth = 28; // base logo size
-    const margin = 8;
-    const top = r.top + window.scrollY + Math.max(0, (r.height - compWidth) / 2);
-    const left = r.left + window.scrollX - compWidth - margin;
+    const { top, left } = positionLeftOf(target, { margin: 8, referenceSizePx: 28 });
     companion.moveTo({ top, left });
   }, [companion]);
 
