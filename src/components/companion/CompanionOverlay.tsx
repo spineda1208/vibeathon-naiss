@@ -7,22 +7,22 @@ import { DOMRectLike } from "./CompanionContext";
 import { useCompanionState } from "./CompanionContext";
 
 export default function CompanionOverlay() {
-  const { isVisible, position, message, isLarge, logoRect } = useCompanionState();
+  const { isVisible, position, message, isLarge, logoRect, avatarSrc, isCentered, sizePx } = useCompanionState();
 
   if (!isVisible) return null;
 
   // Match base size to the navbar logo (28px) or measured logoRect width
-  const baseSize = Math.max(1, Math.floor(logoRect?.width ?? 28));
+  const baseSize = sizePx != null ? Math.max(1, Math.floor(sizePx)) : Math.max(1, Math.floor(logoRect?.width ?? 28));
 
   // Compute animation targets for fixed positioning
-  const topTarget = position.top ?? (logoRect ? logoRect.y : undefined);
-  const leftTarget = position.left ?? (logoRect ? logoRect.x : undefined);
-  const rightTarget = position.right;
-  const bottomTarget = position.bottom;
+  const topTarget = isCentered ? '50%' : (position.top ?? (logoRect ? logoRect.y : undefined));
+  const leftTarget = isCentered ? '50%' : (position.left ?? (logoRect ? logoRect.x : undefined));
+  const rightTarget = isCentered ? undefined : position.right;
+  const bottomTarget = isCentered ? undefined : position.bottom;
 
   return (
     <motion.div
-      className="fixed z-50 pointer-events-none"
+      className="fixed z-[70] pointer-events-none"
       initial={
         logoRect
           ? { top: logoRect.y, left: logoRect.x, opacity: 0.001 }
@@ -36,12 +36,12 @@ export default function CompanionOverlay() {
         opacity: 1,
       }}
       transition={{ type: "spring", stiffness: 260, damping: 28 }}
-      style={{}}
+      style={{ transform: isCentered ? 'translate(-50%, -50%)' : undefined }}
     >
       <div className="relative">
-        <motion.div animate={{ scale: isLarge ? 2.4 : 1 }} transition={{ type: "spring", stiffness: 300, damping: 24 }}>
+        <motion.div animate={{ scale: isCentered ? 1 : (isLarge ? 2.4 : 1) }} transition={{ type: "spring", stiffness: 300, damping: 24 }}>
           <Image
-            src="/logo.png"
+            src={avatarSrc}
             alt="ishaform companion"
             width={baseSize}
             height={baseSize}

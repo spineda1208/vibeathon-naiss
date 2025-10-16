@@ -36,6 +36,9 @@ export type CompanionState = {
   isLarge: boolean; // when "comes to life"
   logoRect: DOMRectLike | null;
   hasActivated: boolean; // once true, navbar icon should hide
+  avatarSrc: string; // image used by overlay
+  isCentered: boolean; // whether overlay should be centered on screen
+  sizePx: number | null; // explicit pixel size override
 };
 
 export type CompanionAPI = {
@@ -46,6 +49,10 @@ export type CompanionAPI = {
   enlarge: () => void;
   resetSize: () => void;
   setLogoRect: (rect: DOMRectLike) => void;
+  setAvatarSrc: (src: string) => void;
+  setCentered: (centered: boolean) => void;
+  setSizePx: (px: number) => void;
+  clearSizePx: () => void;
 };
 
 const CompanionStateContext = createContext<CompanionState | undefined>(
@@ -61,6 +68,9 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     isLarge: false,
     logoRect: null,
     hasActivated: false,
+    avatarSrc: "/logo.png",
+    isCentered: false,
+    sizePx: null,
   }));
 
   const show = useCallback(
@@ -104,6 +114,22 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }, []);
 
+  const setAvatarSrc = useCallback((src: string) => {
+    setState((s) => ({ ...s, avatarSrc: src }));
+  }, []);
+
+  const setCentered = useCallback((centered: boolean) => {
+    setState((s) => ({ ...s, isCentered: centered }));
+  }, []);
+
+  const setSizePx = useCallback((px: number) => {
+    setState((s) => ({ ...s, sizePx: Math.max(1, Math.floor(px)) }));
+  }, []);
+
+  const clearSizePx = useCallback(() => {
+    setState((s) => ({ ...s, sizePx: null }));
+  }, []);
+
   // on mount: hydrate logoRect from localStorage (useful if navigating directly to /demo)
   React.useEffect(() => {
     try {
@@ -124,8 +150,20 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const api = useMemo<CompanionAPI>(
-    () => ({ show, hide, moveTo, say, enlarge, resetSize, setLogoRect }),
-    [show, hide, moveTo, say, enlarge, resetSize, setLogoRect],
+    () => ({
+      show,
+      hide,
+      moveTo,
+      say,
+      enlarge,
+      resetSize,
+      setLogoRect,
+      setAvatarSrc,
+      setCentered,
+      setSizePx,
+      clearSizePx,
+    }),
+    [show, hide, moveTo, say, enlarge, resetSize, setLogoRect, setAvatarSrc, setCentered, setSizePx, clearSizePx],
   );
 
   return (

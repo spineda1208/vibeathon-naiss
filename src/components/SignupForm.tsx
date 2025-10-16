@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useCompanion } from "./companion/CompanionContext";
 import PennStateIdRotaryInput from "./PennStateIdRotaryInput";
 import ReverseRevealPasswordInput from "./ReverseRevealPasswordInput";
 
@@ -22,6 +23,7 @@ export default function SignupForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const isValidPennStateId = validatePennStateId(pennStateId);
   const [isRememberMeBlocking, setIsRememberMeBlocking] = useState(false);
+  const companion = useCompanion();
 
   const audioCtxRef = (typeof window !== "undefined" ? (window as any).__ishaformAudioCtxRef : null) as React.MutableRefObject<any> | null;
   if (typeof window !== "undefined" && !(window as any).__ishaformAudioCtxRef) {
@@ -61,8 +63,19 @@ export default function SignupForm() {
     event.preventDefault();
     if (isRememberMeBlocking) return;
     playAlarmSoundFromFile();
+    // Companion: switch to anime girl, center and enlarge
+    companion.setAvatarSrc("/companion/anime_girl.png");
+    companion.setCentered(true);
+    companion.setSizePx(Math.min(window.innerWidth, window.innerHeight) * 0.6);
+    companion.show();
     setIsRememberMeBlocking(true);
-    setTimeout(() => setIsRememberMeBlocking(false), 3000);
+    setTimeout(() => {
+      setIsRememberMeBlocking(false);
+      // Reset companion to previous behavior
+      companion.setAvatarSrc("/logo.png");
+      companion.setCentered(false);
+      companion.clearSizePx();
+    }, 3000);
   }
 
   const pennStateIdInputClass = [
