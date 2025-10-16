@@ -117,10 +117,8 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     const base = Math.max(1, Math.floor(logoRect?.width ?? 28));
     if (size === CompanionSize.Base) return base;
     if (size === CompanionSize.Medium) return Math.max(1, Math.floor(base * 2));
-    // Large fills a significant portion of viewport
-    const vw = typeof window !== "undefined" ? window.innerWidth : 1024;
-    const vh = typeof window !== "undefined" ? window.innerHeight : 768;
-    return Math.max(1, Math.floor(Math.min(vw, vh) * 0.6));
+    // Large: fixed multiple of base (no viewport usage)
+    return Math.max(1, Math.floor(base * 8));
   }, []);
 
   const setSize = useCallback((size: CompanionSize) => {
