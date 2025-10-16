@@ -96,15 +96,11 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
   );
   const moveTo = useCallback((pos: CompanionPosition) => {
     setState((s) => {
-      // While centered, ignore last-position/size tracking to preserve pre-centered snapshot
-      if (s.isCentered) {
-        return { ...s, position: pos };
-      }
-      return {
-        ...s,
-        lastPosition: { ...s.position },
-        position: pos,
-      };
+      // While centered, ignore move requests entirely to preserve pre-centered snapshot & position
+      if (s.isCentered) return s;
+      // Always snapshot current into last before applying new
+      const next = { ...s, lastPosition: { ...s.position }, position: pos };
+      return next;
     });
   }, []);
   const say = useCallback((text: string, options?: { timeoutMs?: number }) => {
@@ -124,19 +120,22 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
 
   // No pixel sizing stored in state; size is enum-only
 
-  const setSize = useCallback(
-    (size: CompanionSize) => {
-      setState((s) => ({
+  const setSize = useCallback((size: CompanionSize) => {
+    setState((s) => {
+      // While centered, don't mutate last size (we want pre-center size kept)
+      if (s.isCentered) {
+        return { ...s, size, isVisible: true, hasActivated: true };
+      }
+      // Snapshot current size before applying new
+      return {
         ...s,
-        // While centered, do not update lastSize/lastSizePx so backtrack returns to pre-centered size
-        lastSize: s.isCentered ? s.lastSize : s.size,
+        lastSize: s.size,
         size,
         isVisible: true,
         hasActivated: true,
-      }));
-    },
-    [],
-  );
+      };
+    });
+  }, []);
   const setLogoRect = useCallback((rect: DOMRectLike) => {
     setState((s) => ({ ...s, logoRect: rect }));
     try {
@@ -149,21 +148,40 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setCentered = useCallback((centered: boolean) => {
-    setState((s) => ({ ...s, isCentered: centered }));
+    setState((s) => {
+      if (centered) {
+        const logoPos: CompanionPosition | null = s.logoRect
+          ? { top: s.logoRect.y, left: s.logoRect.x }
+          : null;
+        // Snapshot CURRENT state first (prefer logo when first activating), then center
+        const originPosition = !s.hasActivated && logoPos ? logoPos : s.position;
+        return {
+          ...s,
+          isCentered: true,
+          lastPosition: originPosition,
+          lastSize: s.size,
+        };
+      }
+      return { ...s, isCentered: false };
+    });
   }, []);
 
   // direct pixel sizing is not exposed; use setSize(enum)
 
   const backtrack = useCallback(() => {
     setState((s) => {
-      if (!s.lastPosition && !s.lastSize) return s;
+      const fallbackFromLogo: CompanionPosition | null = s.logoRect
+        ? { top: s.logoRect.y, left: s.logoRect.x }
+        : null;
+      if (!s.lastPosition && !s.lastSize && !fallbackFromLogo) return s;
       const prevPosition = s.position;
       const prevSize = s.size;
       const nextSize = s.lastSize ?? s.size;
+      const nextPosition = s.lastPosition ?? fallbackFromLogo ?? s.position;
       return {
         ...s,
         isCentered: false, // backtrack exits centered mode
-        position: s.lastPosition ?? s.position,
+        position: nextPosition,
         size: nextSize,
         lastPosition: prevPosition,
         lastSize: prevSize,
