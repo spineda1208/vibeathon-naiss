@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import React from "react";
-import { useCompanion, useCompanionState } from "./companion/CompanionContext";
+import { CompanionSize, useCompanion, useCompanionState } from "./companion/CompanionContext";
 
 export default function HeaderLogo() {
-  const { setLogoRect, moveTo, show, resetSize } = useCompanion();
+  const { setLogoRect, moveTo, show, setSize } = useCompanion();
   const { hasActivated } = useCompanionState();
   const ref = React.useRef<HTMLElement | null>(null);
 
@@ -35,7 +35,7 @@ export default function HeaderLogo() {
     const top = r.top + window.scrollY;
     const left = r.left + window.scrollX;
     moveTo({ top, left });
-    resetSize();
+    setSize(CompanionSize.Base);
     show();
   };
 

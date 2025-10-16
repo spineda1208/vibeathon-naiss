@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useCompanion } from "./companion/CompanionContext";
+import { CompanionSize, useCompanion } from "./companion/CompanionContext";
 
 type PennStateIdRotaryInputProps = {
   value: string;
@@ -50,6 +50,7 @@ export default function PennStateIdRotaryInput({
     const top = r.top + window.scrollY + Math.max(0, (r.height - compWidth) / 2);
     const left = r.right + window.scrollX + margin;
     companion.moveTo({ top, left });
+    companion.setSize(CompanionSize.Medium);
   }, [companion]);
 
   const moveToAnchorTopRight = React.useCallback(() => {
@@ -76,7 +77,7 @@ export default function PennStateIdRotaryInput({
     onChange(chars.join(""));
 
     // Trigger companion behaviors
-    companion.enlarge();
+    companion.setSize(CompanionSize.Medium);
     companion.show();
     companion.say(`Oh? Tapping ${key}? Let's make this truly inconvenient…`, {
       timeoutMs: 2500,
@@ -107,7 +108,7 @@ export default function PennStateIdRotaryInput({
       inputMode="none"
       onFocus={() => {
         positionCompanionRightOfInput();
-        companion.enlarge();
+        companion.setSize(CompanionSize.Medium);
         companion.show();
       }}
       ref={inputRef}

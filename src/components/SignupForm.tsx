@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import CaptchaGate from "./captcha/CaptchaGate";
-import { useCompanion } from "./companion/CompanionContext";
+import { CompanionSize, useCompanion } from "./companion/CompanionContext";
 import PennStateIdRotaryInput from "./PennStateIdRotaryInput";
 import ReverseRevealPasswordInput from "./ReverseRevealPasswordInput";
 
@@ -71,7 +71,7 @@ export default function SignupForm() {
     // Companion: switch to anime girl, center and enlarge
     companion.setAvatarSrc("/companion/anime_girl.png");
     companion.setCentered(true);
-    companion.setSizePx(Math.min(window.innerWidth, window.innerHeight) * 0.6);
+    companion.setSize(CompanionSize.Large);
     companion.show();
     setIsRememberMeBlocking(true);
     setTimeout(() => {

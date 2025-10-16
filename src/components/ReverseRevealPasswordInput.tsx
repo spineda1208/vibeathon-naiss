@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useCompanion } from "./companion/CompanionContext";
+import { CompanionSize, useCompanion } from "./companion/CompanionContext";
 
 type ReverseRevealPasswordInputProps = {
   value: string;
@@ -82,7 +82,7 @@ export default function ReverseRevealPasswordInput({
       // count toward laugh
       laughCountRef.current += 1;
       if (laughCountRef.current >= laughThresholdRef.current) {
-        companion.say("Hahaha!", { timeoutMs: 1200 });
+    companion.say("Hahaha!", { timeoutMs: 1200 });
         resetLaughPlan();
       }
       return;
@@ -135,7 +135,7 @@ export default function ReverseRevealPasswordInput({
         onPaste={handlePaste}
         onFocus={() => {
           positionCompanionLeftOfInput();
-          companion.enlarge();
+          companion.setSize(CompanionSize.Medium);
           companion.show();
           companion.say("Try putting in the password 'password123'", {
             timeoutMs: 2500,

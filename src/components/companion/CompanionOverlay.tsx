@@ -3,15 +3,14 @@
 import Image from "next/image";
 import React from "react";
 import { motion } from "framer-motion";
-import { DOMRectLike } from "./CompanionContext";
-import { useCompanionState } from "./CompanionContext";
+import { CompanionSize, useCompanionState } from "./CompanionContext";
 
 export default function CompanionOverlay() {
-  const { isVisible, position, message, isLarge, logoRect, avatarSrc, isCentered, sizePx } = useCompanionState();
+  const { isVisible, position, message, logoRect, avatarSrc, isCentered, size, sizePx } = useCompanionState();
 
   if (!isVisible) return null;
 
-  // Match base size to the navbar logo (28px) or measured logoRect width
+  // Pixel width is resolved in context; fallback to logo width if missing
   const baseSize = sizePx != null ? Math.max(1, Math.floor(sizePx)) : Math.max(1, Math.floor(logoRect?.width ?? 28));
 
   // Compute animation targets for fixed positioning
@@ -39,7 +38,7 @@ export default function CompanionOverlay() {
       style={{ transform: isCentered ? 'translate(-50%, -50%)' : undefined }}
     >
       <div className="relative">
-        <motion.div animate={{ scale: isCentered ? 1 : (isLarge ? 2.4 : 1) }} transition={{ type: "spring", stiffness: 300, damping: 24 }}>
+        <motion.div animate={{ scale: isCentered ? 1 : 1 }} transition={{ type: "spring", stiffness: 300, damping: 24 }}>
           <Image
             src={avatarSrc}
             alt="ishaform companion"
