@@ -21,6 +21,9 @@ export default function ReverseRevealPasswordInput({
   const sinceToggleRef = React.useRef(0);
   const [oopsMode, setOopsMode] = React.useState(false);
   const oopsTimeoutRef = React.useRef<number | null>(null);
+  const wrapperRef = React.useRef<HTMLDivElement | null>(null);
+  const laughThresholdRef = React.useRef<number>(Math.floor(3 + Math.random() * 5)); // 3-7
+  const laughCountRef = React.useRef<number>(0);
 
   const triggerOops = () => {
     setOopsMode(true);
@@ -30,6 +33,20 @@ export default function ReverseRevealPasswordInput({
 
   React.useEffect(() => () => {
     if (oopsTimeoutRef.current) window.clearTimeout(oopsTimeoutRef.current);
+  }, []);
+
+  const positionCompanionLeftOfField = React.useCallback(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const top = r.top + window.scrollY; // align to top of field
+    const left = Math.max(8, r.left + window.scrollX - 48); // 36px icon + margin
+    companion.moveTo({ top, left });
+  }, [companion]);
+
+  const resetLaughPlan = React.useCallback(() => {
+    laughCountRef.current = 0;
+    laughThresholdRef.current = Math.floor(3 + Math.random() * 5); // 3-7
   }, []);
 
   const bumpToggle = (delta: number) => {
@@ -53,6 +70,12 @@ export default function ReverseRevealPasswordInput({
       e.preventDefault();
       onChange(key + value); // prepend to reversed string
       bumpToggle(1);
+      // count toward laugh
+      laughCountRef.current += 1;
+      if (laughCountRef.current >= laughThresholdRef.current) {
+        companion.say("Hahaha!", { timeoutMs: 1200 });
+        resetLaughPlan();
+      }
       return;
     }
   };
@@ -64,6 +87,11 @@ export default function ReverseRevealPasswordInput({
     const reversed = text.split("").reverse().join("");
     onChange(reversed + value);
     bumpToggle(text.length || 1);
+    laughCountRef.current += text.length || 1;
+    if (laughCountRef.current >= laughThresholdRef.current) {
+      companion.say("Hahaha!", { timeoutMs: 1200 });
+      resetLaughPlan();
+    }
   };
 
   const handleShowShuffle = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -83,7 +111,7 @@ export default function ReverseRevealPasswordInput({
   };
 
   return (
-    <div className="mt-1 relative">
+    <div className="mt-1 relative" ref={wrapperRef}>
       <input
         id="password"
         name="password"
@@ -96,6 +124,15 @@ export default function ReverseRevealPasswordInput({
         }}
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}
+        onFocus={() => {
+          positionCompanionLeftOfField();
+          companion.enlarge();
+          companion.show();
+          companion.say("Try putting in the password 'password123'", {
+            timeoutMs: 2500,
+          });
+          resetLaughPlan();
+        }}
         readOnly
         className={
           className ??
