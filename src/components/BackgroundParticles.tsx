@@ -11,7 +11,8 @@ export default function BackgroundParticles() {
   }, []);
 
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10">
+    // Constrain the particle canvas toward the visual center of the page
+    <div className="pointer-events-none fixed left-0 right-0 top-[12svh] bottom-[12svh] -z-10">
       <Particles
         id="ishaform-bg"
         init={particlesInit}
