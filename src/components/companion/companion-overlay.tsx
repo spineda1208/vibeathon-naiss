@@ -3,7 +3,11 @@
 import Image from "next/image";
 import React from "react";
 import { motion } from "framer-motion";
-import { CompanionAvatar, CompanionSize, useCompanionState } from "./CompanionContext";
+import {
+  CompanionAvatar,
+  CompanionSize,
+  useCompanionState,
+} from "@/components/companion/companion-context";
 
 export default function CompanionOverlay() {
   const { isVisible, position, message, logoRect, avatar, isCentered, size } = useCompanionState();

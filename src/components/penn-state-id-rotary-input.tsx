@@ -50,16 +50,7 @@ export default function PennStateIdRotaryInput({
     companion.setSize(CompanionSize.Medium);
   }, [companion]);
 
-  const moveToAnchorTopRight = React.useCallback(() => {
-    const el = inputRef.current;
-    if (!el) return;
-    const anchor =
-      (el.closest("[data-companion-anchor]") as HTMLElement | null) ?? el.parentElement;
-    const r = (anchor ?? el).getBoundingClientRect();
-    const top = r.top + window.scrollY;
-    const left = r.right + window.scrollX;
-    companion.moveTo({ top, left });
-  }, [companion]);
+  // Deprecated: anchor-based positioning removed in favor of helpers
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const key = event.key;
@@ -69,7 +60,7 @@ export default function PennStateIdRotaryInput({
     event.preventDefault();
     const position = Number(key) - 1; // 0-based index
 
-    let chars = normalizedValue.split("");
+    const chars = normalizedValue.split("");
     const currentChar = chars[position] ?? " ";
     chars[position] = cycleChar(currentChar);
     onChange(chars.join(""));

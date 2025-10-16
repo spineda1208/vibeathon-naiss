@@ -24,7 +24,7 @@ function validatePennStateId(pennStateId: string): boolean {
 export default function SignupForm() {
   const [pennStateId, setPennStateId] = useState("       ");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [_showPassword, _setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const isValidPennStateId = validatePennStateId(pennStateId);
@@ -34,20 +34,22 @@ export default function SignupForm() {
   const [showCaptchaGate, setShowCaptchaGate] = useState(false);
   const companion = useCompanion();
 
-  const audioCtxRef = (
-    typeof window !== "undefined" ? (window as any).__ishaformAudioCtxRef : null
-  ) as React.MutableRefObject<any> | null;
+  // Global singleton AudioContext stored on window
+  type AudioCtxRef = { current: (AudioContext & { resume: () => Promise<void> }) | null };
+  const _audioCtxRef: AudioCtxRef | null =
+    typeof window !== "undefined" ? ((window as any).__ishaformAudioCtxRef as AudioCtxRef) : null;
   if (typeof window !== "undefined" && !(window as any).__ishaformAudioCtxRef) {
-    (window as any).__ishaformAudioCtxRef = { current: null };
+    (window as any).__ishaformAudioCtxRef = { current: null } as AudioCtxRef;
   }
 
   function ensureAudioContext(): AudioContext | null {
     try {
-      const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext;
-      const ref = (window as any).__ishaformAudioCtxRef as { current: AudioContext | null };
+      const AudioCtx: { new (): AudioContext } =
+        (window as any).AudioContext || (window as any).webkitAudioContext;
+      const ref = (window as any).__ishaformAudioCtxRef as AudioCtxRef;
       if (!ref.current) ref.current = new AudioCtx();
       // Attempt resume in case it's suspended
-      if (ref.current.state === "suspended") ref.current.resume().catch(() => {});
+      if (ref.current && ref.current.state === "suspended") ref.current.resume().catch(() => {});
       return ref.current;
     } catch {
       return null;

@@ -1,5 +1,5 @@
-import SignupForm from "../../components/SignupForm";
-import Link from "next/link";
+import SignupForm from "@/components/signup-form";
+import Link from "next/link"; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 export const metadata = {
   title: "ishaform — Demo Signup",
