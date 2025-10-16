@@ -5,17 +5,16 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <main className="min-h-screen px-6 py-20 sm:py-28">
+    <main className="min-h-screen grid place-items-center px-6 py-12">
       <div className="mx-auto max-w-4xl text-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-black/10 dark:border-white/15 bg-white/70 dark:bg-neutral-900/60 px-3 py-1 text-xs font-medium text-neutral-700 dark:text-neutral-300 shadow-sm backdrop-blur">
-          Introducing: The Internet’s Worst Auth
+          for serious inquiries only
         </div>
         <h1 className="mt-6 text-4xl sm:text-6xl font-extrabold tracking-tight text-neutral-900 dark:text-neutral-100">
-          Auth so bad, it’s beautiful.
+          auth so bad, it’s beautiful.
         </h1>
         <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
-          Experience the pinnacle of questionable UX. Password toggles that
-          taunt you. Validation that judges you. Pixels that sigh audibly.
+          are you tired of paying for clerk?
         </p>
         <div className="mt-8 flex items-center justify-center gap-3">
           <a
