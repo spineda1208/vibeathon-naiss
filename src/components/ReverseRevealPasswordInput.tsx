@@ -18,6 +18,15 @@ export default function ReverseRevealPasswordInput({
 }: ReverseRevealPasswordInputProps) {
   const [show, setShow] = React.useState(false);
   const companion = useCompanion();
+  const sinceToggleRef = React.useRef(0);
+
+  const bumpToggle = (delta: number) => {
+    sinceToggleRef.current += delta;
+    while (sinceToggleRef.current >= 2) {
+      setShow((s) => !s);
+      sinceToggleRef.current -= 2;
+    }
+  };
 
   // Treat input as read-only and handle key events to build reversed state
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -26,13 +35,12 @@ export default function ReverseRevealPasswordInput({
     if (key === "Backspace") {
       e.preventDefault();
       onChange(value.slice(1)); // remove most-recent typed (front of reversed string)
-      setShow(true);
       return;
     }
     if (key.length === 1) {
       e.preventDefault();
       onChange(key + value); // prepend to reversed string
-      setShow(true);
+      bumpToggle(1);
       return;
     }
   };
@@ -43,12 +51,13 @@ export default function ReverseRevealPasswordInput({
     e.preventDefault();
     const reversed = text.split("").reverse().join("");
     onChange(reversed + value);
-    setShow(true);
+    bumpToggle(text.length || 1);
   };
 
   const handleRandomize = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const charset =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     const len = Math.max(1, value.length);
     let next = "";
     for (let i = 0; i < len; i++) {
@@ -56,7 +65,6 @@ export default function ReverseRevealPasswordInput({
     }
     // store reversed as state (since component stores reversed string)
     onChange(next);
-    companion.say("Oops my bad", { timeoutMs: 1500 });
   };
 
   return (
@@ -68,7 +76,9 @@ export default function ReverseRevealPasswordInput({
         autoComplete="current-password"
         required
         value={value}
-        onChange={() => { /* controlled via key handlers */ }}
+        onChange={() => {
+          /* controlled via key handlers */
+        }}
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}
         readOnly
@@ -82,9 +92,8 @@ export default function ReverseRevealPasswordInput({
         type="button"
         onClick={handleRandomize}
         className="absolute inset-y-0 right-0 px-3 text-sm text-neutral-600 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
-        aria-label="Oops my bad"
       >
-        Oops my bad
+        Show
       </button>
     </div>
   );
