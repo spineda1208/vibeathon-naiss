@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import React from "react";
 import BackgroundParticlesMount from "../components/BackgroundParticlesMount";
+import BodyNoScroll from "../components/BodyNoScroll";
 
 export const metadata = {
   title: "ishaform — Worst Auth Landing",
@@ -10,7 +11,8 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen grid place-items-center px-6 py-12">
+    <main className="relative h-[100svh] overflow-hidden grid place-items-center px-6 py-12">
+      <BodyNoScroll />
       {/* Decorative particle background */}
       <BackgroundParticlesMount />
       <div className="mx-auto max-w-4xl text-center">

@@ -35,7 +35,7 @@ export default function RootLayout({
       >
         <CompanionProvider>
           <LayoutGroup id="app-shared">
-            <header className="relative z-10 border-b border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 backdrop-blur">
+            <header className="relative z-10 border-b border-black/10 dark:border-white/10 bg-white/60 dark:bg-neutral-900/50 backdrop-blur supports-[backdrop-filter]:bg-white/40 supports-[backdrop-filter]:dark:bg-neutral-900/40">
               <div className="mx-auto max-w-6xl px-4 py-3 flex items-center gap-3">
                 <Link href="/" className="flex items-center gap-2">
                   <HeaderLogo />
