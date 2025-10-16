@@ -41,60 +41,26 @@ export default function SignupForm() {
     }
   }
 
-  function playAlarmSound(ms: number = 3000) {
-    const ctx = ensureAudioContext();
-    if (!ctx) return;
-
-    const duration = Math.max(0.5, ms / 1000);
-    const now = ctx.currentTime;
-
-    // Main oscillator with pitch LFO (siren effect)
-    const osc = ctx.createOscillator();
-    osc.type = "square";
-    osc.frequency.setValueAtTime(1000, now);
-
-    const lfo = ctx.createOscillator();
-    lfo.type = "triangle";
-    lfo.frequency.setValueAtTime(2.2, now); // sweep rate
-    const lfoGain = ctx.createGain();
-    lfoGain.gain.setValueAtTime(400, now); // +/- 400 Hz around base
-    lfo.connect(lfoGain).connect(osc.frequency);
-
-    // Gentle highpass to remove rumble, slight lowpass to tame harshness
-    const hp = ctx.createBiquadFilter();
-    hp.type = "highpass";
-    hp.frequency.setValueAtTime(300, now);
-    const lp = ctx.createBiquadFilter();
-    lp.type = "lowpass";
-    lp.frequency.setValueAtTime(3000, now);
-
-    // Output gain envelope
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.7, now + 0.03);
-    gain.gain.setValueAtTime(0.7, now + duration - 0.1);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-
-    // Light compression for consistent loudness
-    const comp = ctx.createDynamicsCompressor();
-    comp.threshold.setValueAtTime(-24, now);
-    comp.knee.setValueAtTime(18, now);
-    comp.ratio.setValueAtTime(8, now);
-    comp.attack.setValueAtTime(0.003, now);
-    comp.release.setValueAtTime(0.2, now);
-
-    osc.connect(hp).connect(lp).connect(gain).connect(comp).connect(ctx.destination);
-
-    osc.start(now);
-    lfo.start(now);
-    osc.stop(now + duration);
-    lfo.stop(now + duration);
+  async function playAlarmSoundFromFile() {
+    try {
+      const ctx = ensureAudioContext();
+      if (!ctx) return;
+      const res = await fetch("/remember-alarm.m4a", { cache: "force-cache" });
+      const arrayBuf = await res.arrayBuffer();
+      const audioBuf = await ctx.decodeAudioData(arrayBuf.slice(0));
+      const src = ctx.createBufferSource();
+      src.buffer = audioBuf;
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(1.0, ctx.currentTime);
+      src.connect(gain).connect(ctx.destination);
+      src.start();
+    } catch {}
   }
 
   function handleRememberMeClick(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     if (isRememberMeBlocking) return;
-    playAlarmSound(3000);
+    playAlarmSoundFromFile();
     setIsRememberMeBlocking(true);
     setTimeout(() => setIsRememberMeBlocking(false), 3000);
   }
