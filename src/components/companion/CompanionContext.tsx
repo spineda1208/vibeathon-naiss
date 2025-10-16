@@ -39,6 +39,13 @@ export type CompanionState = {
   avatarSrc: string; // image used by overlay
   isCentered: boolean; // whether overlay should be centered on screen
   sizePx: number | null; // explicit pixel size override
+  saved: {
+    position: CompanionPosition;
+    isCentered: boolean;
+    sizePx: number | null;
+    avatarSrc: string;
+    isLarge: boolean;
+  } | null;
 };
 
 export type CompanionAPI = {
@@ -53,6 +60,8 @@ export type CompanionAPI = {
   setCentered: (centered: boolean) => void;
   setSizePx: (px: number) => void;
   clearSizePx: () => void;
+  saveState: () => void;
+  restoreState: () => void;
 };
 
 const CompanionStateContext = createContext<CompanionState | undefined>(
@@ -71,6 +80,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     avatarSrc: "/logo.png",
     isCentered: false,
     sizePx: null,
+    saved: null,
   }));
 
   const show = useCallback(
@@ -130,6 +140,35 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     setState((s) => ({ ...s, sizePx: null }));
   }, []);
 
+  const saveState = useCallback(() => {
+    setState((s) => ({
+      ...s,
+      saved: {
+        position: { ...s.position },
+        isCentered: s.isCentered,
+        sizePx: s.sizePx,
+        avatarSrc: s.avatarSrc,
+        isLarge: s.isLarge,
+      },
+    }));
+  }, []);
+
+  const restoreState = useCallback(() => {
+    setState((s) => {
+      if (!s.saved) return s;
+      const next = {
+        ...s,
+        position: { ...s.saved.position },
+        isCentered: s.saved.isCentered,
+        sizePx: s.saved.sizePx,
+        avatarSrc: s.saved.avatarSrc,
+        isLarge: s.saved.isLarge,
+        saved: null,
+      };
+      return next;
+    });
+  }, []);
+
   // on mount: hydrate logoRect from localStorage (useful if navigating directly to /demo)
   React.useEffect(() => {
     try {
@@ -162,8 +201,10 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       setCentered,
       setSizePx,
       clearSizePx,
+      saveState,
+      restoreState,
     }),
-    [show, hide, moveTo, say, enlarge, resetSize, setLogoRect, setAvatarSrc, setCentered, setSizePx, clearSizePx],
+    [show, hide, moveTo, say, enlarge, resetSize, setLogoRect, setAvatarSrc, setCentered, setSizePx, clearSizePx, saveState, restoreState],
   );
 
   return (
