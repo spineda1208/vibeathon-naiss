@@ -43,8 +43,9 @@ export default function ReverseRevealPasswordInput({
   const positionCompanionLeftOfField = React.useCallback(() => {
     const el = wrapperRef.current;
     if (!el) return;
-    const r = el.getBoundingClientRect();
-    const top = r.top + window.scrollY; // align to top of field
+    const anchor = (el.closest('[data-companion-anchor]') as HTMLElement | null) ?? el;
+    const r = anchor.getBoundingClientRect();
+    const top = r.top + window.scrollY; // align to top of card area
     const left = Math.max(8, r.left + window.scrollX - 140); // shift further left to avoid overlap
     companion.moveTo({ top, left });
   }, [companion]);

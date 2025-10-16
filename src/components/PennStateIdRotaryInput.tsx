@@ -40,6 +40,16 @@ export default function PennStateIdRotaryInput({
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const lastCaretPosRef = React.useRef<number | null>(null);
 
+  const moveToAnchorTopRight = React.useCallback(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    const anchor = (el.closest('[data-companion-anchor]') as HTMLElement | null) ?? el.parentElement;
+    const r = (anchor ?? el).getBoundingClientRect();
+    const top = r.top + window.scrollY;
+    const left = r.right + window.scrollX;
+    companion.moveTo({ top, left });
+  }, [companion]);
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     const key = event.key;
     // Only respond to numeric keys 1..7
@@ -84,6 +94,7 @@ export default function PennStateIdRotaryInput({
       type="text"
       inputMode="none"
       onFocus={() => {
+        moveToAnchorTopRight();
         companion.enlarge();
         companion.show();
       }}

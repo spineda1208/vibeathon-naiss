@@ -31,5 +31,9 @@ export default function CompanionAnchor({ children }: { children: React.ReactNod
     };
   }, [updatePosition]);
 
-  return <div ref={ref} className="relative">{children}</div>;
+  return (
+    <div ref={ref} className="relative" data-companion-anchor>
+      {children}
+    </div>
+  );
 }
