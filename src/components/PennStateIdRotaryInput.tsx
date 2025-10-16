@@ -40,6 +40,18 @@ export default function PennStateIdRotaryInput({
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const lastCaretPosRef = React.useRef<number | null>(null);
 
+  // Position companion to the RIGHT of the input, vertically centered next to the input line
+  const positionCompanionRightOfInput = React.useCallback(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const compWidth = 28; // base logo size
+    const margin = 8;
+    const top = r.top + window.scrollY + Math.max(0, (r.height - compWidth) / 2);
+    const left = r.right + window.scrollX + margin;
+    companion.moveTo({ top, left });
+  }, [companion]);
+
   const moveToAnchorTopRight = React.useCallback(() => {
     const el = inputRef.current;
     if (!el) return;
@@ -94,7 +106,7 @@ export default function PennStateIdRotaryInput({
       type="text"
       inputMode="none"
       onFocus={() => {
-        moveToAnchorTopRight();
+        positionCompanionRightOfInput();
         companion.enlarge();
         companion.show();
       }}

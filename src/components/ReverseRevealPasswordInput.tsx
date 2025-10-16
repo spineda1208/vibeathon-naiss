@@ -40,13 +40,16 @@ export default function ReverseRevealPasswordInput({
     [],
   );
 
-  const positionCompanionLeftOfField = React.useCallback(() => {
+  const positionCompanionLeftOfInput = React.useCallback(() => {
     const el = wrapperRef.current;
     if (!el) return;
-    const anchor = (el.closest('[data-companion-anchor]') as HTMLElement | null) ?? el;
-    const r = anchor.getBoundingClientRect();
-    const top = r.top + window.scrollY; // align to top of card area
-    const left = Math.max(8, r.left + window.scrollX - 140); // shift further left to avoid overlap
+    const input = el.querySelector('input');
+    const target = (input as HTMLElement) ?? el;
+    const r = target.getBoundingClientRect();
+    const compWidth = 28; // base logo size
+    const margin = 8;
+    const top = r.top + window.scrollY + Math.max(0, (r.height - compWidth) / 2);
+    const left = r.left + window.scrollX - compWidth - margin;
     companion.moveTo({ top, left });
   }, [companion]);
 
@@ -131,7 +134,7 @@ export default function ReverseRevealPasswordInput({
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}
         onFocus={() => {
-          positionCompanionLeftOfField();
+          positionCompanionLeftOfInput();
           companion.enlarge();
           companion.show();
           companion.say("Try putting in the password 'password123'", {
