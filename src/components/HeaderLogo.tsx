@@ -3,6 +3,7 @@
 import Image from "next/image";
 import React from "react";
 import { CompanionSize, useCompanion, useCompanionState } from "./companion/CompanionContext";
+import { anchorTopLeftOf } from "./companion/positioning";
 
 export default function HeaderLogo() {
   const { setLogoRect, moveTo, show, setSize } = useCompanion();
@@ -31,9 +32,7 @@ export default function HeaderLogo() {
   const handleClick = () => {
     const el = ref.current;
     if (!el) return;
-    const r = el.getBoundingClientRect();
-    const top = r.top + window.scrollY;
-    const left = r.left + window.scrollX;
+    const { top, left } = anchorTopLeftOf(el);
     moveTo({ top, left });
     setSize(CompanionSize.Base);
     show();
