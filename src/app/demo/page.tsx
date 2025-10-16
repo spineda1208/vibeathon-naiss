@@ -1,4 +1,5 @@
 import SignupForm from "../../components/SignupForm";
+import Link from "next/link";
 import CompanionAnchor from "../../components/companion/CompanionAnchor";
 
 export const metadata = {
@@ -27,12 +28,12 @@ export default function DemoPage() {
 
         <p className="mt-6 text-center text-sm text-neutral-600 dark:text-neutral-400">
           Regret this experience?{" "}
-          <a
+          <Link
             href="/"
             className="font-medium text-violet-600 hover:underline dark:text-violet-400"
           >
             Return home
-          </a>
+          </Link>
         </p>
       </div>
     </main>

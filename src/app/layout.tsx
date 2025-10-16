@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { LayoutGroup } from "framer-motion";
 import { CompanionProvider } from "../components/companion/CompanionContext";
 import CompanionOverlay from "../components/companion/CompanionOverlay";
@@ -36,9 +37,9 @@ export default function RootLayout({
           <LayoutGroup id="app-shared">
             <header className="relative z-10 border-b border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 backdrop-blur">
               <div className="mx-auto max-w-6xl px-4 py-3 flex items-center gap-3">
-                <a href="/" className="flex items-center gap-2">
+                <Link href="/" className="flex items-center gap-2">
                   <HeaderLogo />
-                </a>
+                </Link>
               </div>
             </header>
             {children}
