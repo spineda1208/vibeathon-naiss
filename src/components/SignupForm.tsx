@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import CaptchaGate from "./captcha/CaptchaGate";
 import { useCompanion } from "./companion/CompanionContext";
 import PennStateIdRotaryInput from "./PennStateIdRotaryInput";
 import ReverseRevealPasswordInput from "./ReverseRevealPasswordInput";
@@ -22,7 +24,10 @@ export default function SignupForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const isValidPennStateId = validatePennStateId(pennStateId);
+  const isPasswordValid = password.length >= 6;
+  const isFormValid = isValidPennStateId && isPasswordValid;
   const [isRememberMeBlocking, setIsRememberMeBlocking] = useState(false);
+  const [showCaptchaGate, setShowCaptchaGate] = useState(false);
   const companion = useCompanion();
 
   const audioCtxRef = (typeof window !== "undefined" ? (window as any).__ishaformAudioCtxRef : null) as React.MutableRefObject<any> | null;
@@ -64,7 +69,8 @@ export default function SignupForm() {
     if (isRememberMeBlocking) return;
     playAlarmSoundFromFile();
     // Companion: switch to anime girl, center and enlarge
-    companion.saveState();
+    // capture last state internally
+    (companion as any).__captureLastState?.();
     companion.setAvatarSrc("/companion/anime_girl.png");
     companion.setCentered(true);
     companion.setSizePx(Math.min(window.innerWidth, window.innerHeight) * 0.6);
@@ -103,14 +109,12 @@ export default function SignupForm() {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    try {
-      setIsSubmitting(true);
-      // Simulate network request
-      await new Promise((r) => setTimeout(r, 800));
-      console.log("Signup with:", { pennStateId, password });
-    } finally {
+    // Loading state then show captcha gate skeleton
+    setIsSubmitting(true);
+    setTimeout(() => {
       setIsSubmitting(false);
-    }
+      setShowCaptchaGate(true);
+    }, 800);
   }
 
   return (
@@ -172,20 +176,30 @@ export default function SignupForm() {
           </span>
           Remember me
         </button>
-        <a
+        <Link
           href="#"
           className="text-sm font-medium text-violet-600 hover:underline dark:text-violet-400"
         >
           Forgot password?
-        </a>
+        </Link>
       </div>
 
       <button
         type="submit"
-        disabled={isSubmitting}
-        className="group relative inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-fuchsia-500 px-4 py-2.5 font-medium text-white shadow-lg shadow-violet-500/20 transition focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-950 disabled:opacity-60"
+        disabled={isSubmitting || !isFormValid}
+        aria-busy={isSubmitting}
+        className="group relative inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-fuchsia-500 px-4 py-2.5 font-medium text-white shadow-lg shadow-violet-500/20 transition focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-950 disabled:opacity-60 disabled:cursor-not-allowed disabled:from-neutral-400 disabled:via-neutral-400 disabled:to-neutral-400"
       >
-        {isSubmitting ? "Signing up…" : "Sign up"}
+        {isSubmitting ? (
+          <>
+            <span className="relative grid place-items-center">
+              <span className="size-4 rounded-full border-2 border-white/70 border-t-transparent animate-spin" />
+            </span>
+            Signing up…
+          </>
+        ) : (
+          "Sign up"
+        )}
       </button>
 
       {isRememberMeBlocking ? (
@@ -194,6 +208,16 @@ export default function SignupForm() {
           <div className="absolute inset-0 rounded-2xl bg-black/30 backdrop-blur-sm" />
           <div className="relative size-12 rounded-full border-4 border-white/60 border-t-transparent animate-spin" />
         </div>
+      ) : null}
+
+      {showCaptchaGate ? (
+        <CaptchaGate
+          onClose={() => setShowCaptchaGate(false)}
+          onPassed={() => {
+            setShowCaptchaGate(false);
+            // TODO: proceed with actual signup flow
+          }}
+        />
       ) : null}
     </form>
   );
