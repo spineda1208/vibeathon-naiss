@@ -19,6 +19,18 @@ export default function ReverseRevealPasswordInput({
   const [show, setShow] = React.useState(false);
   const companion = useCompanion();
   const sinceToggleRef = React.useRef(0);
+  const [oopsMode, setOopsMode] = React.useState(false);
+  const oopsTimeoutRef = React.useRef<number | null>(null);
+
+  const triggerOops = () => {
+    setOopsMode(true);
+    if (oopsTimeoutRef.current) window.clearTimeout(oopsTimeoutRef.current);
+    oopsTimeoutRef.current = window.setTimeout(() => setOopsMode(false), 2000);
+  };
+
+  React.useEffect(() => () => {
+    if (oopsTimeoutRef.current) window.clearTimeout(oopsTimeoutRef.current);
+  }, []);
 
   const bumpToggle = (delta: number) => {
     sinceToggleRef.current += delta;
@@ -54,7 +66,7 @@ export default function ReverseRevealPasswordInput({
     bumpToggle(text.length || 1);
   };
 
-  const handleRandomize = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleShowShuffle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const charset =
       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -65,6 +77,9 @@ export default function ReverseRevealPasswordInput({
     }
     // store reversed as state (since component stores reversed string)
     onChange(next);
+    setShow(true);
+    companion.say("Oops my bad", { timeoutMs: 1500 });
+    triggerOops();
   };
 
   return (
@@ -90,10 +105,10 @@ export default function ReverseRevealPasswordInput({
       />
       <button
         type="button"
-        onClick={handleRandomize}
+        onClick={handleShowShuffle}
         className="absolute inset-y-0 right-0 px-3 text-sm text-neutral-600 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
       >
-        Show
+        {oopsMode ? "Oops my bad" : "Show"}
       </button>
     </div>
   );
