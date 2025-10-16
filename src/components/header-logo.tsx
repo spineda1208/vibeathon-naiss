@@ -2,7 +2,11 @@
 
 import Image from "next/image";
 import React from "react";
-import { CompanionSize, useCompanion, useCompanionState } from "@/components/companion/companion-context";
+import {
+  CompanionSize,
+  useCompanion,
+  useCompanionState,
+} from "@/components/companion/companion-context";
 import { anchorTopLeftOf } from "@/components/companion/positioning";
 
 export default function HeaderLogo() {
@@ -39,7 +43,7 @@ export default function HeaderLogo() {
   };
 
   return (
-    <span className="flex items-center gap-2 cursor-pointer select-none" onClick={handleClick}>
+    <span className="flex cursor-pointer items-center gap-2 select-none" onClick={handleClick}>
       <span ref={ref} className="inline-flex">
         {!hasActivated ? (
           <Image
@@ -52,7 +56,7 @@ export default function HeaderLogo() {
         ) : (
           <span
             aria-hidden="true"
-            className="block size-[28px] rounded-full bg-neutral-200 dark:bg-neutral-800 ring-1 ring-black/10 dark:ring-white/10 animate-pulse"
+            className="block size-[28px] animate-pulse rounded-full bg-neutral-200 ring-1 ring-black/10 dark:bg-neutral-800 dark:ring-white/10"
           />
         )}
       </span>

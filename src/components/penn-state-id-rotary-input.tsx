@@ -53,7 +53,8 @@ export default function PennStateIdRotaryInput({
   const moveToAnchorTopRight = React.useCallback(() => {
     const el = inputRef.current;
     if (!el) return;
-    const anchor = (el.closest('[data-companion-anchor]') as HTMLElement | null) ?? el.parentElement;
+    const anchor =
+      (el.closest("[data-companion-anchor]") as HTMLElement | null) ?? el.parentElement;
     const r = (anchor ?? el).getBoundingClientRect();
     const top = r.top + window.scrollY;
     const left = r.right + window.scrollX;
@@ -91,9 +92,7 @@ export default function PennStateIdRotaryInput({
     if (lastCaretPosRef.current == null) return;
     const el = inputRef.current;
     if (!el) return;
-    const pos =
-      Math.max(0, Math.min(normalizedValue.length, lastCaretPosRef.current)) +
-      1;
+    const pos = Math.max(0, Math.min(normalizedValue.length, lastCaretPosRef.current)) + 1;
     try {
       el.setSelectionRange(pos, pos);
     } catch {}
@@ -117,7 +116,7 @@ export default function PennStateIdRotaryInput({
       readOnly
       className={
         className ??
-        "mt-1 w-full rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 px-3 py-2 text-neutral-900 dark:text-neutral-100 shadow-sm outline-none placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-violet-500/60 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-950"
+        "mt-1 w-full rounded-xl border border-black/10 bg-white/70 px-3 py-2 text-neutral-900 shadow-sm outline-none placeholder:text-neutral-400 focus:ring-2 focus:ring-violet-500/60 focus:ring-offset-2 focus:ring-offset-white dark:border-white/10 dark:bg-neutral-900/60 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:ring-offset-neutral-950"
       }
       placeholder={placeholder ?? "Use keys 1-7 to cycle"}
       aria-label={ariaLabel ?? "Penn State ID Rotary Input"}

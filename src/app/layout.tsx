@@ -30,12 +30,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans min-h-screen bg-gradient-to-br from-indigo-50 via-violet-50 to-fuchsia-50 dark:from-neutral-950 dark:via-violet-950 dark:to-indigo-950`}
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-gradient-to-br from-indigo-50 via-violet-50 to-fuchsia-50 font-sans antialiased dark:from-neutral-950 dark:via-violet-950 dark:to-indigo-950`}
       >
         <CompanionProvider>
           <LayoutGroup id="app-shared">
-            <header className="relative z-10 border-b border-black/10 dark:border-white/10 bg-white/60 dark:bg-neutral-900/50 backdrop-blur supports-[backdrop-filter]:bg-white/40 supports-[backdrop-filter]:dark:bg-neutral-900/40">
-              <div className="mx-auto max-w-6xl px-4 py-3 flex items-center gap-3">
+            <header className="relative z-10 border-b border-black/10 bg-white/60 backdrop-blur supports-[backdrop-filter]:bg-white/40 dark:border-white/10 dark:bg-neutral-900/50 supports-[backdrop-filter]:dark:bg-neutral-900/40">
+              <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
                 <Link href="/" className="flex items-center gap-2">
                   <HeaderLogo />
                 </Link>

@@ -8,18 +8,16 @@ export const metadata = {
 
 export default function DemoPage() {
   return (
-    <main className="min-h-screen grid place-items-center px-4">
+    <main className="grid min-h-screen place-items-center px-4">
       <div className="w-full max-w-md">
         <div className="mb-6 text-center">
           <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
             the best auth form
           </h1>
-          <p className="mt-2 text-neutral-600 dark:text-neutral-400">
-            because who needs clerk
-          </p>
+          <p className="mt-2 text-neutral-600 dark:text-neutral-400">because who needs clerk</p>
         </div>
 
-        <div className="relative rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-neutral-900/70 backdrop-blur p-6 shadow-xl">
+        <div className="relative rounded-2xl border border-black/10 bg-white/80 p-6 shadow-xl backdrop-blur dark:border-white/10 dark:bg-neutral-900/70">
           <SignupForm />
         </div>
 

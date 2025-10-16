@@ -23,9 +23,7 @@ export default function ReverseRevealPasswordInput({
   const [oopsMode, setOopsMode] = React.useState(false);
   const oopsTimeoutRef = React.useRef<number | null>(null);
   const wrapperRef = React.useRef<HTMLDivElement | null>(null);
-  const laughThresholdRef = React.useRef<number>(
-    Math.floor(3 + Math.random() * 5),
-  ); // 3-7
+  const laughThresholdRef = React.useRef<number>(Math.floor(3 + Math.random() * 5)); // 3-7
   const laughCountRef = React.useRef<number>(0);
 
   const triggerOops = () => {
@@ -44,7 +42,7 @@ export default function ReverseRevealPasswordInput({
   const positionCompanionLeftOfInput = React.useCallback(() => {
     const el = wrapperRef.current;
     if (!el) return;
-    const input = el.querySelector('input');
+    const input = el.querySelector("input");
     const target = (input as HTMLElement) ?? el;
     const { top, left } = positionLeftOf(target, { margin: 8, referenceSizePx: 28 });
     companion.moveTo({ top, left });
@@ -79,7 +77,7 @@ export default function ReverseRevealPasswordInput({
       // count toward laugh
       laughCountRef.current += 1;
       if (laughCountRef.current >= laughThresholdRef.current) {
-    companion.say("Hahaha!", { timeoutMs: 1200 });
+        companion.say("Hahaha!", { timeoutMs: 1200 });
         resetLaughPlan();
       }
       return;
@@ -102,8 +100,7 @@ export default function ReverseRevealPasswordInput({
 
   const handleShowShuffle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const charset =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     const len = Math.max(1, value.length);
     let next = "";
     for (let i = 0; i < len; i++) {
@@ -117,7 +114,7 @@ export default function ReverseRevealPasswordInput({
   };
 
   return (
-    <div className="mt-1 relative" ref={wrapperRef}>
+    <div className="relative mt-1" ref={wrapperRef}>
       <input
         id="password"
         name="password"
@@ -142,7 +139,7 @@ export default function ReverseRevealPasswordInput({
         readOnly
         className={
           className ??
-          "w-full rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 px-3 py-2 pr-10 text-neutral-900 dark:text-neutral-100 shadow-sm outline-none placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:ring-2 focus:ring-violet-500/60 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-950"
+          "w-full rounded-xl border border-black/10 bg-white/70 px-3 py-2 pr-10 text-neutral-900 shadow-sm outline-none placeholder:text-neutral-400 focus:ring-2 focus:ring-violet-500/60 focus:ring-offset-2 focus:ring-offset-white dark:border-white/10 dark:bg-neutral-900/60 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:ring-offset-neutral-950"
         }
         placeholder={placeholder}
       />

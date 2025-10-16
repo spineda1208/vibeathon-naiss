@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 export type CompanionMessage = {
   id: string;
@@ -67,9 +61,7 @@ export type CompanionAPI = {
   backtrack: () => void;
 };
 
-const CompanionStateContext = createContext<CompanionState | undefined>(
-  undefined,
-);
+const CompanionStateContext = createContext<CompanionState | undefined>(undefined);
 const CompanionApiContext = createContext<CompanionAPI | undefined>(undefined);
 
 export function CompanionProvider({ children }: { children: React.ReactNode }) {
@@ -90,10 +82,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     () => setState((s) => ({ ...s, isVisible: true, hasActivated: true })),
     [],
   );
-  const hide = useCallback(
-    () => setState((s) => ({ ...s, isVisible: false })),
-    [],
-  );
+  const hide = useCallback(() => setState((s) => ({ ...s, isVisible: false })), []);
   const moveTo = useCallback((pos: CompanionPosition) => {
     setState((s) => {
       // While centered, ignore move requests entirely to preserve pre-centered snapshot & position
@@ -223,38 +212,24 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
       setCentered,
       backtrack,
     }),
-    [
-      show,
-      hide,
-      moveTo,
-      say,
-      setSize,
-      setLogoRect,
-      avatar,
-      setCentered,
-      backtrack,
-    ],
+    [show, hide, moveTo, say, setSize, setLogoRect, avatar, setCentered, backtrack],
   );
 
   return (
     <CompanionApiContext.Provider value={api}>
-      <CompanionStateContext.Provider value={state}>
-        {children}
-      </CompanionStateContext.Provider>
+      <CompanionStateContext.Provider value={state}>{children}</CompanionStateContext.Provider>
     </CompanionApiContext.Provider>
   );
 }
 
 export function useCompanion(): CompanionAPI {
   const ctx = useContext(CompanionApiContext);
-  if (!ctx)
-    throw new Error("useCompanion must be used within CompanionProvider");
+  if (!ctx) throw new Error("useCompanion must be used within CompanionProvider");
   return ctx;
 }
 
 export function useCompanionState(): CompanionState {
   const ctx = useContext(CompanionStateContext);
-  if (!ctx)
-    throw new Error("useCompanionState must be used within CompanionProvider");
+  if (!ctx) throw new Error("useCompanionState must be used within CompanionProvider");
   return ctx;
 }

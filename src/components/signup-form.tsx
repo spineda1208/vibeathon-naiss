@@ -3,7 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import CaptchaGate from "@/components/captcha/captcha-gate";
-import { CompanionAvatar, CompanionSize, useCompanion } from "@/components/companion/companion-context";
+import {
+  CompanionAvatar,
+  CompanionSize,
+  useCompanion,
+} from "@/components/companion/companion-context";
 import PennStateIdRotaryInput from "@/components/penn-state-id-rotary-input";
 import ReverseRevealPasswordInput from "@/components/reverse-reveal-password-input";
 
@@ -30,7 +34,9 @@ export default function SignupForm() {
   const [showCaptchaGate, setShowCaptchaGate] = useState(false);
   const companion = useCompanion();
 
-  const audioCtxRef = (typeof window !== "undefined" ? (window as any).__ishaformAudioCtxRef : null) as React.MutableRefObject<any> | null;
+  const audioCtxRef = (
+    typeof window !== "undefined" ? (window as any).__ishaformAudioCtxRef : null
+  ) as React.MutableRefObject<any> | null;
   if (typeof window !== "undefined" && !(window as any).__ishaformAudioCtxRef) {
     (window as any).__ishaformAudioCtxRef = { current: null };
   }
@@ -138,9 +144,7 @@ export default function SignupForm() {
           aria-label="Penn State ID"
         />
         {errors.pennStateId ? (
-          <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-            {errors.pennStateId}
-          </p>
+          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.pennStateId}</p>
         ) : null}
       </div>
 
@@ -153,9 +157,7 @@ export default function SignupForm() {
         </label>
         <ReverseRevealPasswordInput value={password} onChange={setPassword} />
         {errors.password ? (
-          <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-            {errors.password}
-          </p>
+          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.password}</p>
         ) : null}
       </div>
 
@@ -164,11 +166,11 @@ export default function SignupForm() {
           type="button"
           onClick={handleRememberMeClick}
           aria-pressed={isRememberMeBlocking}
-          className="inline-flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-300 select-none"
+          className="inline-flex items-center gap-2 text-sm text-neutral-700 select-none dark:text-neutral-300"
         >
           <span
             aria-hidden="true"
-            className="grid place-items-center size-4 rounded border border-neutral-300 dark:border-neutral-700 bg-white/80 dark:bg-neutral-900/60"
+            className="grid size-4 place-items-center rounded border border-neutral-300 bg-white/80 dark:border-neutral-700 dark:bg-neutral-900/60"
           >
             {isRememberMeBlocking ? (
               <span className="block size-2 rounded-full bg-violet-600" />
@@ -188,12 +190,12 @@ export default function SignupForm() {
         type="submit"
         disabled={isSubmitting || !isFormValid}
         aria-busy={isSubmitting}
-        className="group relative inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-fuchsia-500 px-4 py-2.5 font-medium text-white shadow-lg shadow-violet-500/20 transition focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-950 disabled:opacity-60 disabled:cursor-not-allowed disabled:from-neutral-400 disabled:via-neutral-400 disabled:to-neutral-400"
+        className="group relative inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-fuchsia-500 px-4 py-2.5 font-medium text-white shadow-lg shadow-violet-500/20 transition focus:ring-2 focus:ring-violet-500/60 focus:ring-offset-2 focus:ring-offset-white focus:outline-none disabled:cursor-not-allowed disabled:from-neutral-400 disabled:via-neutral-400 disabled:to-neutral-400 disabled:opacity-60 dark:focus:ring-offset-neutral-950"
       >
         {isSubmitting ? (
           <>
             <span className="relative grid place-items-center">
-              <span className="size-4 rounded-full border-2 border-white/70 border-t-transparent animate-spin" />
+              <span className="size-4 animate-spin rounded-full border-2 border-white/70 border-t-transparent" />
             </span>
             Signing up…
           </>
@@ -203,10 +205,10 @@ export default function SignupForm() {
       </button>
 
       {isRememberMeBlocking ? (
-        <div className="absolute inset-0 z-[60] rounded-2xl pointer-events-auto grid place-items-center overflow-hidden">
-          <div className="absolute inset-0 rounded-2xl bg-red-600/30 animate-pulse" />
+        <div className="pointer-events-auto absolute inset-0 z-[60] grid place-items-center overflow-hidden rounded-2xl">
+          <div className="absolute inset-0 animate-pulse rounded-2xl bg-red-600/30" />
           <div className="absolute inset-0 rounded-2xl bg-black/30 backdrop-blur-sm" />
-          <div className="relative size-12 rounded-full border-4 border-white/60 border-t-transparent animate-spin" />
+          <div className="relative size-12 animate-spin rounded-full border-4 border-white/60 border-t-transparent" />
         </div>
       ) : null}
 
