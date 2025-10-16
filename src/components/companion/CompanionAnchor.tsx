@@ -8,6 +8,7 @@ export default function CompanionAnchor({ children }: { children: React.ReactNod
   const ref = React.useRef<HTMLDivElement | null>(null);
   const companion = useCompanion();
   const { isVisible } = useCompanionState();
+  const initializedRef = React.useRef(false);
 
   const updatePosition = React.useCallback(() => {
     if (!ref.current) return;
@@ -20,8 +21,14 @@ export default function CompanionAnchor({ children }: { children: React.ReactNod
 
   React.useEffect(() => {
     if (!isVisible) return; // only anchor when companion is visible
-    updatePosition();
-    const onResize = () => updatePosition();
+    initializedRef.current = false; // skip the very first callback after (re)mount
+    const onResize = () => {
+      if (!initializedRef.current) {
+        initializedRef.current = true;
+        return; // ignore first invocation to avoid page-load reposition
+      }
+      updatePosition();
+    };
     window.addEventListener("resize", onResize);
     window.addEventListener("scroll", onResize, { passive: true } as any);
     const ro = new ResizeObserver(onResize);

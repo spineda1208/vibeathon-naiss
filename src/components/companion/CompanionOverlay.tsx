@@ -13,9 +13,9 @@ export default function CompanionOverlay() {
   // Pixel width is resolved in context; fallback to logo width if missing
   const baseSize = sizePx != null ? Math.max(1, Math.floor(sizePx)) : Math.max(1, Math.floor(logoRect?.width ?? 28));
 
-  // Compute animation targets for fixed positioning
-  const topTarget = isCentered ? '50%' : (position.top ?? (logoRect ? logoRect.y : undefined));
-  const leftTarget = isCentered ? '50%' : (position.left ?? (logoRect ? logoRect.x : undefined));
+  // Compute animation targets for fixed positioning (no fallback to logoRect here)
+  const topTarget = isCentered ? '50%' : position.top;
+  const leftTarget = isCentered ? '50%' : position.left;
   const rightTarget = isCentered ? undefined : position.right;
   const bottomTarget = isCentered ? undefined : position.bottom;
 
