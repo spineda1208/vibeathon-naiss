@@ -37,12 +37,12 @@ export default function HeaderLogo() {
             alt="ishaform logo"
             width={28}
             height={28}
-            className="rounded"
+            className="rounded-full"
           />
         ) : (
           <span
             aria-hidden="true"
-            className="block size-[28px] rounded bg-neutral-200 dark:bg-neutral-800 ring-1 ring-black/10 dark:ring-white/10 animate-pulse"
+            className="block size-[28px] rounded-full bg-neutral-200 dark:bg-neutral-800 ring-1 ring-black/10 dark:ring-white/10 animate-pulse"
           />
         )}
       </span>

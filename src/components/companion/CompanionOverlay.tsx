@@ -44,7 +44,7 @@ export default function CompanionOverlay() {
             alt="ishaform companion"
             width={size}
             height={size}
-            className="rounded"
+            className="rounded-full"
           />
         </motion.div>
         {message?.text ? (
