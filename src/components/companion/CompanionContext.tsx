@@ -50,10 +50,8 @@ export type CompanionState = {
   avatar: CompanionAvatar; // selected avatar
   isCentered: boolean; // whether overlay should be centered on screen
   size: CompanionSize; // strict sizing mode
-  sizePx: number | null; // resolved pixel width for rendering
   // Previous position/size snapshot for quick backtracking
   lastPosition: CompanionPosition | null;
-  lastSizePx: number | null;
   lastSize: CompanionSize | null;
 };
 
@@ -84,9 +82,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     avatar: CompanionAvatar.Logo,
     isCentered: false,
     size: CompanionSize.Base,
-    sizePx: null,
     lastPosition: null,
-    lastSizePx: null,
     lastSize: null,
   }));
 
@@ -126,17 +122,7 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const resolveSizePx = useCallback(
-    (size: CompanionSize, logoRect: DOMRectLike | null) => {
-      const base = Math.max(1, Math.floor(logoRect?.width ?? 28));
-      if (size === CompanionSize.Base) return base;
-      if (size === CompanionSize.Medium)
-        return Math.max(1, Math.floor(base * 2));
-      // Large: fixed multiple of base (no viewport usage)
-      return Math.max(1, Math.floor(base * 8));
-    },
-    [],
-  );
+  // No pixel sizing stored in state; size is enum-only
 
   const setSize = useCallback(
     (size: CompanionSize) => {
@@ -145,31 +131,18 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
         // While centered, do not update lastSize/lastSizePx so backtrack returns to pre-centered size
         lastSize: s.isCentered ? s.lastSize : s.size,
         size,
-        lastSizePx: s.isCentered ? s.lastSizePx : s.sizePx,
-        sizePx: resolveSizePx(size, s.logoRect),
         isVisible: true,
         hasActivated: true,
       }));
     },
-    [resolveSizePx],
+    [],
   );
-  const setLogoRect = useCallback(
-    (rect: DOMRectLike) => {
-      setState((s) => {
-        // If size is Base or Medium, recompute sizePx from new logoRect
-        const shouldRecompute = s.size !== CompanionSize.Large;
-        return {
-          ...s,
-          logoRect: rect,
-          sizePx: shouldRecompute ? resolveSizePx(s.size, rect) : s.sizePx,
-        };
-      });
-      try {
-        localStorage.setItem("companion.logoRect", JSON.stringify(rect));
-      } catch {}
-    },
-    [resolveSizePx],
-  );
+  const setLogoRect = useCallback((rect: DOMRectLike) => {
+    setState((s) => ({ ...s, logoRect: rect }));
+    try {
+      localStorage.setItem("companion.logoRect", JSON.stringify(rect));
+    } catch {}
+  }, []);
 
   const avatar = useCallback((a: CompanionAvatar) => {
     setState((s) => ({ ...s, avatar: a }));
@@ -183,24 +156,20 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
 
   const backtrack = useCallback(() => {
     setState((s) => {
-      if (!s.lastPosition && s.lastSizePx == null && !s.lastSize) return s;
+      if (!s.lastPosition && !s.lastSize) return s;
       const prevPosition = s.position;
-      const prevSizePx = s.sizePx;
       const prevSize = s.size;
       const nextSize = s.lastSize ?? s.size;
-      const nextSizePx = s.lastSizePx ?? resolveSizePx(nextSize, s.logoRect);
       return {
         ...s,
         isCentered: false, // backtrack exits centered mode
         position: s.lastPosition ?? s.position,
         size: nextSize,
-        sizePx: nextSizePx,
         lastPosition: prevPosition,
-        lastSizePx: prevSizePx,
         lastSize: prevSize,
       };
     });
-  }, [resolveSizePx]);
+  }, []);
 
   // on mount: hydrate logoRect from localStorage (useful if navigating directly to /demo)
   React.useEffect(() => {
@@ -215,15 +184,11 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
           typeof parsed.width === "number" &&
           typeof parsed.height === "number"
         ) {
-          setState((s) => ({
-            ...s,
-            logoRect: parsed,
-            sizePx: s.sizePx ?? resolveSizePx(s.size, parsed),
-          }));
+          setState((s) => ({ ...s, logoRect: parsed }));
         }
       }
     } catch {}
-  }, [resolveSizePx]);
+  }, []);
 
   const api = useMemo<CompanionAPI>(
     () => ({

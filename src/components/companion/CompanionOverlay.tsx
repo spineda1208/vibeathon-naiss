@@ -6,12 +6,17 @@ import { motion } from "framer-motion";
 import { CompanionAvatar, CompanionSize, useCompanionState } from "./CompanionContext";
 
 export default function CompanionOverlay() {
-  const { isVisible, position, message, logoRect, avatar, isCentered, size, sizePx } = useCompanionState();
+  const { isVisible, position, message, logoRect, avatar, isCentered, size } = useCompanionState();
 
   if (!isVisible) return null;
 
-  // Pixel width is resolved in context; fallback to logo width if missing
-  const baseSize = sizePx != null ? Math.max(1, Math.floor(sizePx)) : Math.max(1, Math.floor(logoRect?.width ?? 28));
+  // Map enum sizes to pixels at render time only
+  const logoBase = Math.max(1, Math.floor(logoRect?.width ?? 28));
+  const baseSize = size === CompanionSize.Base
+    ? logoBase
+    : size === CompanionSize.Medium
+      ? Math.max(1, Math.floor(logoBase * 2))
+      : Math.max(1, Math.floor(logoBase * 8));
 
   // Compute animation targets for fixed positioning (no fallback to logoRect here)
   const topTarget = isCentered ? '50%' : position.top;
