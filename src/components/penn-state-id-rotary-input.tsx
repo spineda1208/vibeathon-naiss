@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { CompanionSize, useCompanion } from "./companion/CompanionContext";
-import { positionRightOf } from "./companion/positioning";
+import { CompanionSize, useCompanion } from "@/components/companion/companion-context";
+import { positionRightOf } from "@/components/companion/positioning";
 
 type PennStateIdRotaryInputProps = {
   value: string;

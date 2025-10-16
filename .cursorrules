@@ -1,3 +1,5 @@
 - commit frequently to git with a short message
     - example commit:  feat: added a companion api
 - package manager is bun
+- names of ts and tsx files should be skewer case
+- never use relative imports always use the "@/" alias

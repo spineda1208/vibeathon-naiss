@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { LayoutGroup } from "framer-motion";
-import { CompanionProvider } from "../components/companion/CompanionContext";
-import CompanionOverlay from "../components/companion/CompanionOverlay";
-import HeaderLogo from "../components/HeaderLogo";
+import { CompanionProvider } from "@/components/companion/companion-context";
+import CompanionOverlay from "@/components/companion/companion-overlay";
+import HeaderLogo from "@/components/header-logo";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -20,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "ishaform",
-  description: "ishaform — the internet’s worst auth (ironically)",
+  description: "ishaform — the internet’s best forms",
 };
 
 export default function RootLayout({

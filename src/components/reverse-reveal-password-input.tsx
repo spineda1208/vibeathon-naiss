@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { CompanionSize, useCompanion } from "./companion/CompanionContext";
-import { positionLeftOf } from "./companion/positioning";
+import { CompanionSize, useCompanion } from "@/components/companion/companion-context";
+import { positionLeftOf } from "@/components/companion/positioning";
 
 type ReverseRevealPasswordInputProps = {
   value: string;

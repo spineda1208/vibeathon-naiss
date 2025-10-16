@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import React from "react";
-import { CompanionSize, useCompanion, useCompanionState } from "./companion/CompanionContext";
-import { anchorTopLeftOf } from "./companion/positioning";
+import { CompanionSize, useCompanion, useCompanionState } from "@/components/companion/companion-context";
+import { anchorTopLeftOf } from "@/components/companion/positioning";
 
 export default function HeaderLogo() {
   const { setLogoRect, moveTo, show, setSize } = useCompanion();

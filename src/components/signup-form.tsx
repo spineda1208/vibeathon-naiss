@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import CaptchaGate from "./captcha/CaptchaGate";
-import { CompanionAvatar, CompanionSize, useCompanion } from "./companion/CompanionContext";
-import PennStateIdRotaryInput from "./PennStateIdRotaryInput";
-import ReverseRevealPasswordInput from "./ReverseRevealPasswordInput";
+import CaptchaGate from "@/components/captcha/captcha-gate";
+import { CompanionAvatar, CompanionSize, useCompanion } from "@/components/companion/companion-context";
+import PennStateIdRotaryInput from "@/components/penn-state-id-rotary-input";
+import ReverseRevealPasswordInput from "@/components/reverse-reveal-password-input";
 
 type FormErrors = {
   pennStateId?: string;

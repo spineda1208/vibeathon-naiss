@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 import React from "react";
-import BackgroundParticlesMount from "../components/background/BackgroundParticlesMount";
-import BodyNoScroll from "../components/BodyNoScroll";
+import BackgroundParticlesMount from "@/components/background/background-particles-mount";
+import BodyNoScroll from "@/components/body-no-scroll";
 
 export const metadata = {
   title: "ishaform — Worst Auth Landing",
