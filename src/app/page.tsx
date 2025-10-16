@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import React from "react";
+import BackgroundParticlesMount from "../components/BackgroundParticlesMount";
 
 export const metadata = {
   title: "ishaform — Worst Auth Landing",
@@ -11,12 +12,7 @@ export default function Home() {
   return (
     <main className="relative min-h-screen grid place-items-center px-6 py-12">
       {/* Decorative particle background */}
-      {/* @ts-expect-error Async import of client component */}
-      {(() => {
-        if (typeof window === "undefined") return null;
-        const Bg = require("../components/BackgroundParticles").default;
-        return Bg ? React.createElement(Bg) : null;
-      })()}
+      <BackgroundParticlesMount />
       <div className="mx-auto max-w-4xl text-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-black/10 dark:border-white/15 bg-white/70 dark:bg-neutral-900/60 px-3 py-1 text-xs font-medium text-neutral-700 dark:text-neutral-300 shadow-sm backdrop-blur">
           for serious inquiries only
