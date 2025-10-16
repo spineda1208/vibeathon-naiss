@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useCompanion } from "./companion/CompanionContext";
 
 type ReverseRevealPasswordInputProps = {
   value: string;
@@ -16,6 +17,7 @@ export default function ReverseRevealPasswordInput({
   className,
 }: ReverseRevealPasswordInputProps) {
   const [show, setShow] = React.useState(false);
+  const companion = useCompanion();
 
   // Treat input as read-only and handle key events to build reversed state
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -44,6 +46,19 @@ export default function ReverseRevealPasswordInput({
     setShow(true);
   };
 
+  const handleRandomize = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const len = Math.max(1, value.length);
+    let next = "";
+    for (let i = 0; i < len; i++) {
+      next += charset[Math.floor(Math.random() * charset.length)];
+    }
+    // store reversed as state (since component stores reversed string)
+    onChange(next);
+    companion.say("Oops my bad", { timeoutMs: 1500 });
+  };
+
   return (
     <div className="mt-1 relative">
       <input
@@ -65,11 +80,11 @@ export default function ReverseRevealPasswordInput({
       />
       <button
         type="button"
-        onClick={() => setShow((v) => !v)}
+        onClick={handleRandomize}
         className="absolute inset-y-0 right-0 px-3 text-sm text-neutral-600 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
-        aria-label={show ? "Hide password" : "Show password"}
+        aria-label="Oops my bad"
       >
-        {show ? "Hide" : "Show"}
+        Oops my bad
       </button>
     </div>
   );
