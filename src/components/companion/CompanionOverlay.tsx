@@ -21,8 +21,8 @@ export default function CompanionOverlay() {
   // Compute animation targets for fixed positioning (no fallback to logoRect here)
   const topTarget = isCentered ? '50%' : position.top;
   const leftTarget = isCentered ? '50%' : position.left;
-  const rightTarget = isCentered ? undefined : position.right;
-  const bottomTarget = isCentered ? undefined : position.bottom;
+  const rightTarget = undefined;
+  const bottomTarget = undefined;
 
   return (
     <motion.div

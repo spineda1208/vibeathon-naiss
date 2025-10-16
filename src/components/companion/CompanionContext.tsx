@@ -75,7 +75,7 @@ const CompanionApiContext = createContext<CompanionAPI | undefined>(undefined);
 export function CompanionProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<CompanionState>(() => ({
     isVisible: false,
-    position: { right: 24, bottom: 24 },
+    position: {},
     message: null,
     logoRect: null,
     hasActivated: false,
@@ -98,9 +98,12 @@ export function CompanionProvider({ children }: { children: React.ReactNode }) {
     setState((s) => {
       // While centered, ignore move requests entirely to preserve pre-centered snapshot & position
       if (s.isCentered) return s;
-      // Always snapshot current into last before applying new
-      const next = { ...s, lastPosition: { ...s.position }, position: pos };
-      return next;
+      // Deterministic absolute positioning: only allow top/left (ignore right/bottom)
+      const normalized: CompanionPosition = {
+        top: pos.top,
+        left: pos.left,
+      };
+      return { ...s, lastPosition: { ...s.position }, position: normalized };
     });
   }, []);
   const say = useCallback((text: string, options?: { timeoutMs?: number }) => {
