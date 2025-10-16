@@ -41,90 +41,60 @@ export default function SignupForm() {
     }
   }
 
-  function playFartSound() {
+  function playAlarmSound(ms: number = 3000) {
     const ctx = ensureAudioContext();
     if (!ctx) return;
 
+    const duration = Math.max(0.5, ms / 1000);
     const now = ctx.currentTime;
-    const duration = 1.2;
 
-    // Create brown noise buffer
-    const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * duration), ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    let lastOut = 0;
-    for (let i = 0; i < data.length; i++) {
-      const white = Math.random() * 2 - 1;
-      const brown = (lastOut + 0.02 * white) / 1.02;
-      lastOut = brown;
-      // Subtle non-linear saturation for fullness
-      const saturated = Math.tanh(brown * 3.0);
-      data[i] = saturated;
-    }
+    // Main oscillator with pitch LFO (siren effect)
+    const osc = ctx.createOscillator();
+    osc.type = "square";
+    osc.frequency.setValueAtTime(1000, now);
 
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
-
-    // Filters to shape the timbre (bandpass + lowpass)
-    const band = ctx.createBiquadFilter();
-    band.type = "bandpass";
-    band.frequency.setValueAtTime(180, now);
-    band.Q.setValueAtTime(0.7, now);
-
-    const low = ctx.createBiquadFilter();
-    low.type = "lowpass";
-    low.frequency.setValueAtTime(380, now);
-    low.frequency.exponentialRampToValueAtTime(160, now + duration);
-
-    // Gain envelope (louder overall with quick attack, sputtery tail)
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(1.1, now + 0.04);
-    gain.gain.exponentialRampToValueAtTime(0.08, now + 0.45);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-
-    // Gentle compressor to prevent clipping while allowing loudness
-    const comp = ctx.createDynamicsCompressor();
-    comp.threshold.setValueAtTime(-28, now);
-    comp.knee.setValueAtTime(24, now);
-    comp.ratio.setValueAtTime(12, now);
-    comp.attack.setValueAtTime(0.003, now);
-    comp.release.setValueAtTime(0.25, now);
-
-    // Sub-oscillator with downward glide for comedic thump
-    const sub = ctx.createOscillator();
-    sub.type = "sine";
-    sub.frequency.setValueAtTime(95, now);
-    sub.frequency.exponentialRampToValueAtTime(48, now + 0.5);
-    const subGain = ctx.createGain();
-    subGain.gain.setValueAtTime(0.0001, now);
-    subGain.gain.exponentialRampToValueAtTime(0.35, now + 0.06);
-    subGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
-
-    // Sputter LFO on noise gain for realism
     const lfo = ctx.createOscillator();
     lfo.type = "triangle";
-    lfo.frequency.setValueAtTime(9 + Math.random() * 5, now);
+    lfo.frequency.setValueAtTime(2.2, now); // sweep rate
     const lfoGain = ctx.createGain();
-    lfoGain.gain.setValueAtTime(0.18, now);
-    lfo.connect(lfoGain).connect(gain.gain);
+    lfoGain.gain.setValueAtTime(400, now); // +/- 400 Hz around base
+    lfo.connect(lfoGain).connect(osc.frequency);
 
-    // Wire up graph
-    noise.connect(band).connect(low).connect(gain).connect(comp).connect(ctx.destination);
-    sub.connect(subGain).connect(comp);
+    // Gentle highpass to remove rumble, slight lowpass to tame harshness
+    const hp = ctx.createBiquadFilter();
+    hp.type = "highpass";
+    hp.frequency.setValueAtTime(300, now);
+    const lp = ctx.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.setValueAtTime(3000, now);
 
-    // Start/stop
-    noise.start(now);
+    // Output gain envelope
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.7, now + 0.03);
+    gain.gain.setValueAtTime(0.7, now + duration - 0.1);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+    // Light compression for consistent loudness
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.setValueAtTime(-24, now);
+    comp.knee.setValueAtTime(18, now);
+    comp.ratio.setValueAtTime(8, now);
+    comp.attack.setValueAtTime(0.003, now);
+    comp.release.setValueAtTime(0.2, now);
+
+    osc.connect(hp).connect(lp).connect(gain).connect(comp).connect(ctx.destination);
+
+    osc.start(now);
     lfo.start(now);
-    sub.start(now + 0.02);
-    noise.stop(now + duration);
+    osc.stop(now + duration);
     lfo.stop(now + duration);
-    sub.stop(now + 0.8);
   }
 
   function handleRememberMeClick(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     if (isRememberMeBlocking) return;
-    playFartSound();
+    playAlarmSound(3000);
     setIsRememberMeBlocking(true);
     setTimeout(() => setIsRememberMeBlocking(false), 3000);
   }
@@ -241,8 +211,10 @@ export default function SignupForm() {
       </button>
 
       {isRememberMeBlocking ? (
-        <div className="absolute inset-0 z-[60] rounded-2xl bg-black/40 backdrop-blur-sm pointer-events-auto grid place-items-center">
-          <div className="size-12 rounded-full border-4 border-white/60 border-t-transparent animate-spin" />
+        <div className="absolute inset-0 z-[60] rounded-2xl pointer-events-auto grid place-items-center overflow-hidden">
+          <div className="absolute inset-0 rounded-2xl bg-red-600/30 animate-pulse" />
+          <div className="absolute inset-0 rounded-2xl bg-black/30 backdrop-blur-sm" />
+          <div className="relative size-12 rounded-full border-4 border-white/60 border-t-transparent animate-spin" />
         </div>
       ) : null}
     </form>
