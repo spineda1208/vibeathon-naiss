@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import React from "react";
-import BackgroundParticlesMount from "../components/BackgroundParticlesMount";
+import BackgroundParticlesMount from "../components/background/BackgroundParticlesMount";
 import BodyNoScroll from "../components/BodyNoScroll";
 
 export const metadata = {
@@ -19,7 +19,7 @@ export default function Home() {
           for serious inquiries only
         </div>
         <h1 className="mt-6 text-4xl sm:text-6xl font-extrabold tracking-tight text-neutral-900 dark:text-neutral-100">
-          auth so bad, it’s beautiful.
+          forms so bad, they’re beautiful.
         </h1>
         <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-400">
           are you tired of paying for clerk?
