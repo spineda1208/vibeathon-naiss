@@ -1,1 +1,3 @@
 - commit frequently to git with a short message
+    - example commit:  feat: added a companion api
+- package manager is bun

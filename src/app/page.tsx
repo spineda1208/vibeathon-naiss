@@ -11,9 +11,8 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <main className="relative h-[100svh] overflow-hidden grid place-items-center px-6 py-12">
+    <main className="relative h-[100svh] overflow-hidden flex px-6 py-48">
       <BodyNoScroll />
-      {/* Decorative particle background */}
       <BackgroundParticlesMount />
       <div className="mx-auto max-w-4xl text-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-black/10 dark:border-white/15 bg-white/70 dark:bg-neutral-900/60 px-3 py-1 text-xs font-medium text-neutral-700 dark:text-neutral-300 shadow-sm backdrop-blur">
@@ -34,36 +33,13 @@ export default function Home() {
           </Link>
         </div>
       </div>
-
-      <section
-        id="features"
-        className="mx-auto mt-20 max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-6"
-      >
-        <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-6 backdrop-blur">
-          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
-            Aggressively Mid UX
-          </h3>
-          <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-            Buttons that are almost the right size. Almost.
-          </p>
+      <div className="fixed inset-x-0 bottom-3 z-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <span className="inline-flex items-center gap-2 rounded-full border border-black/10 dark:border-white/15 bg-white/70 dark:bg-neutral-900/60 px-3 py-1 text-xs font-medium text-neutral-700 dark:text-neutral-300 backdrop-blur">
+            brought to you by fans of dreamberd <span aria-hidden>🧪</span>
+          </span>
         </div>
-        <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-6 backdrop-blur">
-          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
-            Chaotic Validation
-          </h3>
-          <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-            Rules that feel personal. Because they are.
-          </p>
-        </div>
-        <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-neutral-900/60 p-6 backdrop-blur">
-          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
-            Aesthetic Regret
-          </h3>
-          <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-            Gradients so dramatic they deserve a podcast.
-          </p>
-        </div>
-      </section>
+      </div>
     </main>
   );
 }

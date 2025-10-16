@@ -13,10 +13,10 @@ export default function DemoPage() {
       <div className="w-full max-w-md">
         <div className="mb-6 text-center">
           <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-100">
-            The Worst Auth Form
+            the best auth form
           </h1>
           <p className="mt-2 text-neutral-600 dark:text-neutral-400">
-            Please don’t enjoy this.
+            because who needs clerk
           </p>
         </div>
 
@@ -26,15 +26,7 @@ export default function DemoPage() {
           </div>
         </CompanionAnchor>
 
-        <p className="mt-6 text-center text-sm text-neutral-600 dark:text-neutral-400">
-          Regret this experience?{" "}
-          <Link
-            href="/"
-            className="font-medium text-violet-600 hover:underline dark:text-violet-400"
-          >
-            Return home
-          </Link>
-        </p>
+        <p className="mt-6 text-center text-sm text-neutral-600 dark:text-neutral-400"></p>
       </div>
     </main>
   );
