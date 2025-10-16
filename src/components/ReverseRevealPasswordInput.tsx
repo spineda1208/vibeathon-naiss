@@ -22,7 +22,9 @@ export default function ReverseRevealPasswordInput({
   const [oopsMode, setOopsMode] = React.useState(false);
   const oopsTimeoutRef = React.useRef<number | null>(null);
   const wrapperRef = React.useRef<HTMLDivElement | null>(null);
-  const laughThresholdRef = React.useRef<number>(Math.floor(3 + Math.random() * 5)); // 3-7
+  const laughThresholdRef = React.useRef<number>(
+    Math.floor(3 + Math.random() * 5),
+  ); // 3-7
   const laughCountRef = React.useRef<number>(0);
 
   const triggerOops = () => {
@@ -31,16 +33,19 @@ export default function ReverseRevealPasswordInput({
     oopsTimeoutRef.current = window.setTimeout(() => setOopsMode(false), 2000);
   };
 
-  React.useEffect(() => () => {
-    if (oopsTimeoutRef.current) window.clearTimeout(oopsTimeoutRef.current);
-  }, []);
+  React.useEffect(
+    () => () => {
+      if (oopsTimeoutRef.current) window.clearTimeout(oopsTimeoutRef.current);
+    },
+    [],
+  );
 
   const positionCompanionLeftOfField = React.useCallback(() => {
     const el = wrapperRef.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
     const top = r.top + window.scrollY; // align to top of field
-    const left = Math.max(8, r.left + window.scrollX - 48); // 36px icon + margin
+    const left = Math.max(8, r.left + window.scrollX - 140); // shift further left to avoid overlap
     companion.moveTo({ top, left });
   }, [companion]);
 
