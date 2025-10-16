@@ -11,7 +11,8 @@ export default function CompanionOverlay() {
 
   if (!isVisible) return null;
 
-  const size = isLarge ? 100 : 36;
+  // Match base size to the navbar logo (28px) or measured logoRect width
+  const baseSize = Math.max(1, Math.floor(logoRect?.width ?? 28));
 
   // Compute animation targets for fixed positioning
   const topTarget = position.top ?? (logoRect ? logoRect.y : undefined);
@@ -38,12 +39,12 @@ export default function CompanionOverlay() {
       style={{}}
     >
       <div className="relative">
-        <motion.div animate={{ scale: isLarge ? 1.25 : 1 }} transition={{ type: "spring", stiffness: 300, damping: 24 }}>
+        <motion.div animate={{ scale: isLarge ? 1.8 : 1 }} transition={{ type: "spring", stiffness: 300, damping: 24 }}>
           <Image
             src="/logo.png"
             alt="ishaform companion"
-            width={size}
-            height={size}
+            width={baseSize}
+            height={baseSize}
             className="rounded-full"
           />
         </motion.div>
