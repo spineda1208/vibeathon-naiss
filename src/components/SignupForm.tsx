@@ -23,35 +23,102 @@ export default function SignupForm() {
   const isValidPennStateId = validatePennStateId(pennStateId);
   const [isRememberMeBlocking, setIsRememberMeBlocking] = useState(false);
 
-  function playFartSound() {
+  const audioCtxRef = (typeof window !== "undefined" ? (window as any).__ishaformAudioCtxRef : null) as React.MutableRefObject<any> | null;
+  if (typeof window !== "undefined" && !(window as any).__ishaformAudioCtxRef) {
+    (window as any).__ishaformAudioCtxRef = { current: null };
+  }
+
+  function ensureAudioContext(): AudioContext | null {
     try {
       const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext;
-      const ctx = new AudioCtx();
-      const duration = 0.7;
-      const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * duration), ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      // simple brown-ish noise
-      let lastOut = 0;
-      for (let i = 0; i < data.length; i++) {
-        const white = Math.random() * 2 - 1;
-        const brown = (lastOut + 0.02 * white) / 1.02;
-        lastOut = brown;
-        data[i] = brown * 1.6; // boost a bit
-      }
-      const source = ctx.createBufferSource();
-      source.buffer = buffer;
-      const filter = ctx.createBiquadFilter();
-      filter.type = "lowpass";
-      filter.frequency.setValueAtTime(220, ctx.currentTime);
-      filter.frequency.exponentialRampToValueAtTime(90, ctx.currentTime + duration);
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.7, ctx.currentTime + 0.06);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
-      source.connect(filter).connect(gain).connect(ctx.destination);
-      source.start();
-      source.stop(ctx.currentTime + duration + 0.05);
-    } catch {}
+      const ref = (window as any).__ishaformAudioCtxRef as { current: AudioContext | null };
+      if (!ref.current) ref.current = new AudioCtx();
+      // Attempt resume in case it's suspended
+      if (ref.current.state === "suspended") ref.current.resume().catch(() => {});
+      return ref.current;
+    } catch {
+      return null;
+    }
+  }
+
+  function playFartSound() {
+    const ctx = ensureAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const duration = 1.2;
+
+    // Create brown noise buffer
+    const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * duration), ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    let lastOut = 0;
+    for (let i = 0; i < data.length; i++) {
+      const white = Math.random() * 2 - 1;
+      const brown = (lastOut + 0.02 * white) / 1.02;
+      lastOut = brown;
+      // Subtle non-linear saturation for fullness
+      const saturated = Math.tanh(brown * 3.0);
+      data[i] = saturated;
+    }
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    // Filters to shape the timbre (bandpass + lowpass)
+    const band = ctx.createBiquadFilter();
+    band.type = "bandpass";
+    band.frequency.setValueAtTime(180, now);
+    band.Q.setValueAtTime(0.7, now);
+
+    const low = ctx.createBiquadFilter();
+    low.type = "lowpass";
+    low.frequency.setValueAtTime(380, now);
+    low.frequency.exponentialRampToValueAtTime(160, now + duration);
+
+    // Gain envelope (louder overall with quick attack, sputtery tail)
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(1.1, now + 0.04);
+    gain.gain.exponentialRampToValueAtTime(0.08, now + 0.45);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+    // Gentle compressor to prevent clipping while allowing loudness
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.setValueAtTime(-28, now);
+    comp.knee.setValueAtTime(24, now);
+    comp.ratio.setValueAtTime(12, now);
+    comp.attack.setValueAtTime(0.003, now);
+    comp.release.setValueAtTime(0.25, now);
+
+    // Sub-oscillator with downward glide for comedic thump
+    const sub = ctx.createOscillator();
+    sub.type = "sine";
+    sub.frequency.setValueAtTime(95, now);
+    sub.frequency.exponentialRampToValueAtTime(48, now + 0.5);
+    const subGain = ctx.createGain();
+    subGain.gain.setValueAtTime(0.0001, now);
+    subGain.gain.exponentialRampToValueAtTime(0.35, now + 0.06);
+    subGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
+
+    // Sputter LFO on noise gain for realism
+    const lfo = ctx.createOscillator();
+    lfo.type = "triangle";
+    lfo.frequency.setValueAtTime(9 + Math.random() * 5, now);
+    const lfoGain = ctx.createGain();
+    lfoGain.gain.setValueAtTime(0.18, now);
+    lfo.connect(lfoGain).connect(gain.gain);
+
+    // Wire up graph
+    noise.connect(band).connect(low).connect(gain).connect(comp).connect(ctx.destination);
+    sub.connect(subGain).connect(comp);
+
+    // Start/stop
+    noise.start(now);
+    lfo.start(now);
+    sub.start(now + 0.02);
+    noise.stop(now + duration);
+    lfo.stop(now + duration);
+    sub.stop(now + 0.8);
   }
 
   function handleRememberMeClick(event: React.MouseEvent<HTMLButtonElement>) {
