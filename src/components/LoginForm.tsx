@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
+
+const CatClickGameModal = dynamic(() => import("./CatClickGameModal"), { ssr: false });
 
 type FormErrors = {
   email?: string;
@@ -17,6 +20,8 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [showCaptcha, setShowCaptcha] = useState(false);
+  const [captchaPassed, setCaptchaPassed] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -37,6 +42,12 @@ export default function LoginForm() {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
+    // If captcha not passed yet, open cat mini-game instead of submitting
+    if (!captchaPassed) {
+      setShowCaptcha(true);
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       // Simulate network request
@@ -48,7 +59,8 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <>
+      <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-neutral-800 dark:text-neutral-200">
           Email
@@ -109,13 +121,35 @@ export default function LoginForm() {
         </a>
       </div>
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="group relative inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-fuchsia-500 px-4 py-2.5 font-medium text-white shadow-lg shadow-violet-500/20 transition focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-950 disabled:opacity-60"
-      >
-        {isSubmitting ? "Signing in…" : "Sign in"}
-      </button>
-    </form>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="group relative inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-fuchsia-500 px-4 py-2.5 font-medium text-white shadow-lg shadow-violet-500/20 transition focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-950 disabled:opacity-60"
+        >
+          {isSubmitting ? "Signing in…" : "Sign in"}
+        </button>
+      </form>
+
+      {/* Captcha Modal */}
+      <CatClickGameModal
+        isOpen={showCaptcha}
+        onWin={() => {
+          setCaptchaPassed(true);
+          setShowCaptcha(false);
+          // After passing captcha, auto-submit the form
+          // Trigger submission flow
+          (async () => {
+            try {
+              setIsSubmitting(true);
+              await new Promise((r) => setTimeout(r, 800));
+              console.log("Login with:", { email, password, captcha: "passed" });
+            } finally {
+              setIsSubmitting(false);
+            }
+          })();
+        }}
+        onRequestClose={() => setShowCaptcha(false)}
+      />
+    </>
   );
 }

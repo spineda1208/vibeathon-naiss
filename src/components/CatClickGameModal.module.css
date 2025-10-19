@@ -1,0 +1,142 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal {
+  background: white;
+  color: #111827;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  width: min(92vw, 720px);
+  max-height: 86vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+}
+
+.header {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.instructions {
+  margin: 6px 0 0 0;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.playArea {
+  position: relative;
+  background: #dceffd;
+  background-image: url("/anime-outdoor-bg.svg");
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(0,0,0,0.06);
+  margin: 16px 20px;
+  border-radius: 12px;
+  height: min(56vh, 420px);
+  overflow: hidden;
+}
+
+.footer {
+  padding: 12px 20px 16px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.button {
+  appearance: none;
+  border: none;
+  background: #111827;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.cat {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  user-select: none;
+  cursor: pointer;
+  transform-origin: center;
+  will-change: transform, opacity;
+  transition: left 1000ms ease, top 1000ms ease, transform 120ms ease, opacity 120ms ease;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
+}
+
+.catImg {
+  width: 36px;
+  height: 36px;
+  display: block;
+}
+
+.winOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.winText {
+  background: rgba(255, 255, 255, 0.85);
+  color: #111827;
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+}
+
+.cat:hover {
+  transform: scale(1.06);
+}
+
+.catPop {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+@keyframes wiggle {
+  0% { transform: translateY(0) }
+  50% { transform: translateY(-2px) }
+  100% { transform: translateY(0) }
+}
+
+.idleMotion {
+  animation: wiggle 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .idleMotion { animation: none; }
+  .cat { transition: opacity 120ms ease; }
+}
+
+

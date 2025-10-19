@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" fill="none">
+  <!-- Soft anime outdoor background: sky, sun, hills, path, some trees -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#BDE0FE"/>
+      <stop offset="100%" stop-color="#E0F2FE"/>
+    </linearGradient>
+    <linearGradient id="hill1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#A7F3D0"/>
+      <stop offset="100%" stop-color="#6EE7B7"/>
+    </linearGradient>
+    <linearGradient id="hill2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#86EFAC"/>
+      <stop offset="100%" stop-color="#34D399"/>
+    </linearGradient>
+    <linearGradient id="path" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FDE68A"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1920" height="1080" fill="url(#sky)"/>
+  <!-- Sun -->
+  <circle cx="1580" cy="220" r="70" fill="#FFF3B0"/>
+  <circle cx="1580" cy="220" r="110" fill="#FFF3B0" opacity="0.25"/>
+  <!-- Distant hills -->
+  <path d="M0 640 C 240 540, 460 560, 680 640 C 900 720, 1140 700, 1440 640 C 1680 590, 1800 600, 1920 640 L 1920 1080 L 0 1080 Z" fill="url(#hill1)"/>
+  <!-- Near hills -->
+  <path d="M0 760 C 180 700, 420 740, 700 780 C 960 820, 1240 780, 1520 760 C 1680 750, 1820 760, 1920 780 L 1920 1080 L 0 1080 Z" fill="url(#hill2)"/>
+  <!-- Path -->
+  <path d="M780 1080 C 820 880, 980 820, 1040 640 C 1080 520, 1000 460, 950 420 C 900 380, 840 360, 820 280 C 800 220, 780 180, 760 160 L 720 160 C 740 200, 760 260, 770 320 C 780 380, 800 420, 820 460 C 840 520, 820 560, 800 640 C 760 800, 720 880, 700 1080 Z" fill="url(#path)" opacity="0.8"/>
+  <!-- Simple trees -->
+  <g opacity="0.9">
+    <rect x="330" y="720" width="16" height="80" fill="#7C3E1D"/>
+    <circle cx="338" cy="700" r="40" fill="#34D399"/>
+  </g>
+  <g opacity="0.9">
+    <rect x="1450" y="690" width="16" height="90" fill="#7C3E1D"/>
+    <circle cx="1458" cy="664" r="44" fill="#22C55E"/>
+  </g>
+  <g opacity="0.9">
+    <rect x="980" y="720" width="16" height="70" fill="#7C3E1D"/>
+    <circle cx="988" cy="700" r="34" fill="#10B981"/>
+  </g>
+</svg>
+
+
